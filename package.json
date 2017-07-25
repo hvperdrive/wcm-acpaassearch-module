@@ -14,19 +14,23 @@
     "frontend": null,
     "backend": {
       "dirPath": "app/",
-      "variables": [{
-        "group": "Config",
-        "key": "acpaassearch",
-        "accordion": true,
-        "variables": [{
-          "label": "Elastic hostname",
-          "description": "Hostname (uri) of the elastic server",
-          "key": "host",
-          "value": "",
-          "type": "text",
-          "required": true
-        }]
-      }],
+      "variables": [
+        {
+          "group": "Config",
+          "key": "acpaassearch",
+          "accordion": true,
+          "variables": [
+            {
+              "label": "Elastic hostname",
+              "description": "Hostname (uri) of the elastic server",
+              "key": "host",
+              "value": "",
+              "type": "text",
+              "required": true
+            }
+          ]
+        }
+      ],
       "routeDirPaths": [
         "app/routes/"
       ]
@@ -37,7 +41,8 @@
   "dependencies": {
     "elasticsearch": "~13.2.0",
     "lodash": "~4.17.4",
-    "node-uuid": "~1.4.8"
+    "node-uuid": "~1.4.8",
+    "q": "^1.5.0"
   },
   "devDependencies": {
     "@district01/eslint-config": "~1.0.0",
