@@ -10,6 +10,17 @@ module.exports = function() {
 	return contentTypes;
 };
 
+module.exports.list = function() {
+	return Object.keys(contentTypes).reduce(function(acc, curr) {
+		acc.push({
+			type: curr,
+			id: contentTypes[curr],
+		});
+
+		return acc;
+	}, []);
+};
+
 module.exports.reload = function(uuids) {
 	// @todo: fetch contentTypes & store mongo id
 };
