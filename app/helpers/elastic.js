@@ -2,6 +2,7 @@
 
 require("rootpath")();
 var elasticsearch = require("elasticsearch");
+var index = require("../config/mappings");
 
 var variablesHelper = require("../helpers/variables");
 
@@ -36,6 +37,8 @@ var initiateClient = function initiateClient() {
 				}
 
 				me.connected = true;
+
+				me.client.indices.create(index);
 			});
 		});
 };
