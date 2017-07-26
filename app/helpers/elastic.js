@@ -3,8 +3,8 @@
 require("rootpath")();
 var elasticsearch = require("elasticsearch");
 var index = require("../config/mappings");
-
 var variablesHelper = require("../helpers/variables");
+var indicesHelper = require("./indices");
 
 var initiateClient = function initiateClient() {
 	var me = this;
@@ -38,7 +38,7 @@ var initiateClient = function initiateClient() {
 
 				me.connected = true;
 
-				me.client.indices.create(index);
+                indicesHelper.create(me.client, index);
 			});
 		});
 };
