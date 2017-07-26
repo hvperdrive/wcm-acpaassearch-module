@@ -1,6 +1,6 @@
 var Emitter = require("app/middleware/emitter");
 
-var contentTypes = require("../helpers.contentTypes").list;
+var contentTypes = require("../helpers/contentTypes").list;
 var productHelper = require("../helpers/product");
 var versionHelper = require("../helpers/version");
 
@@ -21,7 +21,7 @@ function verifyContentType(type) {
 	type = typeof type === "string" ? type : type._id;
 
 	return contentTypes.find(function(t) {
-		return t.id === type;
+		return t.id === type.toString();
 	});
 }
 
@@ -36,9 +36,9 @@ function handleUpdate(contentItem, action) {
 		return;
 	}
 
-	return verifyAction(contentType, action)(contentItem);
-}
 
+	return verifyAction(action, contentType)(contentItem);
+}
 module.exports.start = function start() {
 	Emitter.on("contentCreated", function(contentItem) {
 		handleUpdate(contentItem, "create");
