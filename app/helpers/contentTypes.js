@@ -6,9 +6,7 @@ var contentTypes = {
 	api: "593eb572aef3a98476c03ba1", // @todo: remove dummy
 };
 
-module.exports = function() {
-	return contentTypes;
-};
+module.exports = contentTypes;
 
 module.exports.list = function() {
 	return Object.keys(contentTypes).reduce(function(acc, curr) {
@@ -19,7 +17,7 @@ module.exports.list = function() {
 
 		return acc;
 	}, []);
-};
+}();
 
 module.exports.reload = function(uuids) {
 	// @todo: fetch contentTypes & store mongo id
