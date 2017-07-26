@@ -36,8 +36,15 @@ function handleUpdate(contentItem, action) {
 		return;
 	}
 
+	var syncAction = verifyAction(action, contentType);
 
-	return verifyAction(action, contentType)(contentItem);
+	if (!syncAction) {
+		return console.log("ACTION NOT ALLOWED", action);
+	}
+
+	var elasticsearch = require("../helpers/elastic");
+
+	syncAction(contentItem, elasticsearch.client);
 }
 module.exports.start = function start() {
 	Emitter.on("contentCreated", function(contentItem) {

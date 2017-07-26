@@ -4,7 +4,6 @@ var Q = require("q");
 
 var ContentModel = require("app/models/content");
 var productId = require("./contentTypes").product;
-var elasticsearch = require("./elastic").client;
 var index = require("../config/mappings").index;
 
 function fetchProducts() {
@@ -28,7 +27,7 @@ function fetchProducts() {
 	.exec();
 }
 
-function syncProduct(product) {
+function syncProduct(product, elasticsearch) {
 	return elasticsearch.create({
 		index: index,
 		type: "product",
@@ -37,7 +36,7 @@ function syncProduct(product) {
 	});
 }
 
-function updateProduct(product) {
+function updateProduct(product, elasticsearch) {
 	return elasticsearch.update({
 		index: index,
 		type: "product",
@@ -46,7 +45,7 @@ function updateProduct(product) {
 	});
 }
 
-function removeProduct(product) {
+function removeProduct(product, elasticsearch) {
 	return elasticsearch.delete({
 		index: index,
 		type: "product",
@@ -54,9 +53,9 @@ function removeProduct(product) {
 	});
 }
 
-function syncProducts(syncNonModified, products) {
+function syncProducts(syncNonModified, products, elasticsearch) {
 	return Q.all(products.map(function(product) {
-		return syncProduct(product, syncNonModified);
+		return syncProduct(product, elasticsearch);
 	}));
 }
 

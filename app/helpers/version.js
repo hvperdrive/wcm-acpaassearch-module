@@ -5,7 +5,6 @@ var Q = require("q");
 var ContentModel = require("app/models/content");
 var versionId = require("./contentTypes").version;
 var apiId = require("./contentTypes").api;
-var elasticsearch = require("./elastic").client;
 var index = require("../config/mappings").index;
 
 function fetchVersions() {
@@ -44,7 +43,7 @@ function syncVersion(version) {
 	});
 }
 
-function updateVersion(version) {
+function updateVersion(version, elasticsearch) {
 	return elasticsearch.update({
 		index: index,
 		type: "version",
@@ -53,7 +52,7 @@ function updateVersion(version) {
 	});
 }
 
-function removeVersion(version) {
+function removeVersion(version, elasticsearch) {
 	return elasticsearch.delete({
 		index: index,
 		type: "version",
@@ -61,9 +60,9 @@ function removeVersion(version) {
 	});
 }
 
-function syncVersions(syncNonModified, versions) {
+function syncVersions(syncNonModified, versions, elasticsearch) {
 	return Q.all(versions.map(function(version) {
-		return syncVersion(version, syncNonModified);
+		return syncVersion(version, elasticsearch);
 	}));
 }
 
