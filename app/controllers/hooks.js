@@ -4,11 +4,7 @@ var elastic = require("../helpers/elastic");
 var onConfigurationChanged = function onConfigurationChanged() {
 	console.log("on configuration changed");
 	// Reload config
-	variablesHelper.reload()
-		.then(function() {
-			// load content types
-		});
-
+	variablesHelper.reload();
 	elastic.reload();
 
 };

@@ -10,7 +10,6 @@ var initiateClient = function initiateClient() {
 
 	variablesHelper.reload()
 		.then(function(variables) {
-
 			var host = "";
 			var log = "";
 
