@@ -6,19 +6,27 @@ var contentTypes = {
 	api: "593eb572aef3a98476c03ba1", // @todo: remove dummy
 };
 
-module.exports = contentTypes;
-
-module.exports.list = function() {
-	return Object.keys(contentTypes).reduce(function(acc, curr) {
+var toList = function(types) {
+	return Object.keys(types).reduce(function(acc, curr) {
 		acc.push({
 			type: curr,
-			id: contentTypes[curr],
+			id: types[curr],
 		});
 
 		return acc;
 	}, []);
-}();
+};
+
+module.exports = contentTypes;
 
 module.exports.reload = function(uuids) {
 	// @todo: fetch contentTypes & store mongo id
 };
+
+module.exports.verifyType = function(type) {
+	type = typeof type === "string" ? type : type._id;
+
+	return toList(contentTypes).find(function(t) {
+		return t.id === type.toString();
+	});
+}
