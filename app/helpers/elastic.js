@@ -38,7 +38,7 @@ var initiateClient = function initiateClient() {
 
 				me.connected = true;
 
-                indicesHelper.create(me.client, index);
+				indicesHelper.create(me.client, index);
 			});
 		});
 };

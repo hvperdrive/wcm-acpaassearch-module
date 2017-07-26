@@ -6,7 +6,7 @@ var onConfigurationChanged = function onConfigurationChanged() {
 	// Reload config
 	variablesHelper.reload()
 		.then(function() {
-			// load content types
+			// @todo: load content types
 		});
 
 	elastic.reload();
