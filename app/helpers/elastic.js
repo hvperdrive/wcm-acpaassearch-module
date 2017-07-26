@@ -18,7 +18,7 @@ var initiateClient = function initiateClient() {
 				return;
 			}
 
-			host = variables.acpaassearch.variables.host;
+			host = variables.acpaassearch.variables.host + ":" + (variables.acpaassearch.variables.port || 9200);
 
 			me.client = new elasticsearch.Client({
 				host: host,
