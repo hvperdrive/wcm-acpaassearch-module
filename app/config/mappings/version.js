@@ -47,6 +47,7 @@ module.exports = {
 			type: "object",
 			properties: {
 				contentType: {
+                    index: "no",
 					type: "string",
 				},
 			},
