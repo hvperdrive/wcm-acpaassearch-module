@@ -15,7 +15,7 @@ var contentMongoFields = {
 	uuid: 1,
 	fields: 1,
 	"meta.contentType": 1,
-	"meta.slug": 1
+	"meta.slug": 1,
 };
 
 function fetchApiS(uuids) {

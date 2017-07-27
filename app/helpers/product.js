@@ -10,7 +10,6 @@ var index = require("../config/mappings").index;
 var language = require("../config/language").lang;
 var contentTypes = require("./contentTypes");
 var versionHelper = require("./version");
-var customItemsHelper = require("./customItems");
 
 var contentMongoQuery = {
 	"meta.contentType": contentTypes.product,

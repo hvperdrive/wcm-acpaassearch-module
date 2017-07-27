@@ -107,8 +107,8 @@ function fetchVersions(uuid, product) {
 				});
 
 				result.customItems = response.customItems.map(function(item) {
-					var version = versionApiS.find(function(version) {
-						return version.api === item.apiUuid;
+					var version = versionApiS.find(function(v) {
+						return v.api === item.apiUuid;
 					}) || {};
 
 					item.version = version.version;
