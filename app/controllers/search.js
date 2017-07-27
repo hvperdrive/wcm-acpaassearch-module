@@ -7,9 +7,7 @@ module.exports.search = function search(req, res) {
 	var q = req.query.q || req.query.query;
 
 	if (!q) {
-		return res.status(400).json({
-			err: "No query parameter 'q' found in the request.",
-		});
+		return res.status(400).json({ err: "No query parameter 'q' found in the request." });
 	}
 
 	elasticClient.client.search({
@@ -19,12 +17,10 @@ module.exports.search = function search(req, res) {
 	})
 		.then(
 			function onSuccess(result) {
-				res.status(200).json(result);
+				res.status(200).json(SearchHelper.resultMapper(result));
 			},
 			function onError(responseError) {
-				res.status(500).json({
-					err: responseError,
-				});
+				res.status(500).json({ err: responseError });
 			}
 		);
 };

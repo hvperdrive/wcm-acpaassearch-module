@@ -1,86 +1,85 @@
 {
-  "name": "wcm-acpaassearch-module",
-  "version": "0.0.16",
-  "description": "Search module for AcPaaS Portal",
-  "main": "app/routes/index.js",
-  "scripts": {
-    "test": "NODE_ENV=test ./node_modules/.bin/istanbul cover --dir ./coverage ./node_modules/.bin/_mocha -- -R spec -t 15000 --recursive --slow 2"
-  },
-  "keywords": [
-    "solr",
-    "search"
-  ],
-  "wcmModule": {
-    "frontend": null,
-    "backend": {
-      "dirPath": "app/",
-      "variables": [
-        {
-          "group": "Config",
-          "key": "acpaassearch",
-          "accordion": true,
-          "variables": [
-            {
-              "label": "Elastic hostname",
-              "description": "Hostname (uri) of the elastic server",
-              "key": "host",
-              "value": "localhost",
-              "type": "text",
-              "required": true
-            },
-            {
-              "label": "Elastic port",
-              "description": "Port of the elastic server",
-              "key": "port",
-              "value": "9200",
-              "type": "number",
-              "required": true
-            },
-            {
-              "label": "Elastic index name",
-              "description": "The elastic index to store to",
-              "key": "index",
-              "value": "a-search",
-              "type": "text",
-              "required": true
-            }
-          ]
+    "name": "wcm-acpaassearch-module",
+    "version": "0.0.16",
+    "description": "Search module for AcPaaS Portal",
+    "main": "app/routes/index.js",
+    "scripts": {
+        "test": "NODE_ENV=test ./node_modules/.bin/istanbul cover --dir ./coverage ./node_modules/.bin/_mocha -- -R spec -t 15000 --recursive --slow 2"
+    },
+    "keywords": [
+        "solr",
+        "search"
+    ],
+    "wcmModule": {
+        "frontend": null,
+        "backend": {
+            "dirPath": "app/",
+            "variables": [
+                {
+                    "group": "Config",
+                    "key": "acpaassearch",
+                    "accordion": true,
+                    "variables": [
+                        {
+                            "label": "Elastic hostname",
+                            "description": "Hostname (uri) of the elastic server",
+                            "key": "host",
+                            "value": "localhost",
+                            "type": "text",
+                            "required": true
+                        },
+                        {
+                            "label": "Elastic port",
+                            "description": "Port of the elastic server",
+                            "key": "port",
+                            "value": "9200",
+                            "type": "number",
+                            "required": true
+                        },
+                        {
+                            "label": "Elastic index name",
+                            "description": "The elastic index to store to",
+                            "key": "index",
+                            "value": "a-search",
+                            "type": "text",
+                            "required": true
+                        }
+                    ]
+                }
+            ],
+            "routeDirPaths": [
+                "app/routes/"
+            ]
         }
-      ],
-      "routeDirPaths": [
-        "app/routes/"
-      ]
+    },
+    "author": "Jeroen Valcke",
+    "license": "MIT",
+    "dependencies": {
+        "elasticsearch": "~13.2.0",
+        "lodash": "~4.17.4",
+        "node-uuid": "~1.4.8"
+    },
+    "devDependencies": {
+        "@district01/eslint-config": "~1.0.0",
+        "apidoc-swagger": "git+https://github.com/JvJefke/apidoc-swagger.git",
+        "chai": "~3.5.0",
+        "eslint": "~3.19.0",
+        "gulp": "~3.9.1",
+        "gulp-angular-templatecache": "~2.0.0",
+        "gulp-apidoc": "~0.2.0",
+        "gulp-apidoc-swagger": "~0.2.2",
+        "gulp-clean": "~0.3.2",
+        "gulp-replace": "~0.5.4",
+        "gulp-zip": "~3.2.0",
+        "install": "~0.8.4",
+        "istanbul": "~0.4.5",
+        "jshint": "~2.9.4",
+        "mocha": "~3.4.1",
+        "mockery": "~2.0.0",
+        "mongoose": "~4.9.9",
+        "nock": "~9.0.13",
+        "node-uuid": "~1.4.8",
+        "rewire": "~2.5.2",
+        "run-sequence": "~1.2.2"
     }
-  },
-  "author": "Jeroen Valcke",
-  "license": "MIT",
-  "dependencies": {
-    "elasticsearch": "~13.2.0",
-    "lodash": "~4.17.4",
-    "node-cron": "~1.2.0",
-    "node-uuid": "~1.4.8"
-  },
-  "devDependencies": {
-    "@district01/eslint-config": "~1.0.0",
-    "apidoc-swagger": "git+https://github.com/JvJefke/apidoc-swagger.git",
-    "chai": "~3.5.0",
-    "eslint": "~3.19.0",
-    "gulp": "~3.9.1",
-    "gulp-angular-templatecache": "~2.0.0",
-    "gulp-apidoc": "~0.2.0",
-    "gulp-apidoc-swagger": "~0.2.2",
-    "gulp-clean": "~0.3.2",
-    "gulp-replace": "~0.5.4",
-    "gulp-zip": "~3.2.0",
-    "install": "~0.8.4",
-    "istanbul": "~0.4.5",
-    "jshint": "~2.9.4",
-    "mocha": "~3.4.1",
-    "mockery": "~2.0.0",
-    "mongoose": "~4.9.9",
-    "nock": "~9.0.13",
-    "node-uuid": "~1.4.8",
-    "rewire": "~2.5.2",
-    "run-sequence": "~1.2.2"
-  }
 }
