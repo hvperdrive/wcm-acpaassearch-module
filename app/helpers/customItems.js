@@ -5,7 +5,7 @@ var _ = require("lodash");
 
 var ContentModel = require("app/models/content");
 var contentTypes = require("./contentTypes");
-var language = require("../config/language").lang;
+var languageHelper = require("./language");
 
 var contentMongoQuery = {
 	"meta.contentType": contentTypes.customItem,
@@ -31,7 +31,7 @@ function fetchCustomItems(uuids) {
 	.exec()
 	.then(function(items) {
 		return items.map(function(item) {
-			item.fields.body = item.fields.body[language];
+			item.fields.body = languageHelper.verifyMultilanguage(item.fields.body);
 			return item;
 		});
 	}, function(err) {

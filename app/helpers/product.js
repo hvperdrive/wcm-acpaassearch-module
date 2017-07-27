@@ -7,7 +7,7 @@ var _ = require("lodash");
 var ContentModel = require("app/models/content");
 var PopulateHelper = require("app/helpers/populate");
 var index = require("../config/mappings").index;
-var language = require("../config/language").lang;
+var languageHelper = require("../helpers/language");
 var contentTypes = require("./contentTypes");
 var versionHelper = require("./version");
 
@@ -36,7 +36,7 @@ function fetchContent(query, fields) {
 		.then(function(item) {
 			return PopulateHelper.fields.one(item, {
 				populate: "customItems,roadmap",
-				lang: language, // @todo: get language from request
+				lang: languageHelper.currentLanguage(), // @todo: get language from request
 			}).then(function(pItem) {
 				pItem.customItems = pItem.fields.customItems.map(function(i) {
 					return i.value;
