@@ -1,9 +1,12 @@
 var variablesHelper = require("../helpers/variables");
+var elastic = require("../helpers/elastic");
 
 var onConfigurationChanged = function onConfigurationChanged() {
 	console.log("on configuration changed");
 	// Reload config
 	variablesHelper.reload();
+	elastic.reload();
+
 };
 
 var beforeRemove = function beforeRemove() {
