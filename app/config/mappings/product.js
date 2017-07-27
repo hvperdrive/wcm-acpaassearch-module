@@ -1,100 +1,124 @@
-"use strict";
-
-var customItems = require("./customItems");
-
 module.exports = {
-	properties: {
-		fields: {
-			type: "nested",
-			properties: {
-				title: {
-					type: "string",
+	"properties": {
+		"fields": {
+			"type": "object",
+			"properties": {
+				"productCategory": {
+					"type": "string",
+					"index": "not_analyzed",
 				},
-				intro: {
-					type: "string",
-				},
-				about: {
-					type: "string",
-				},
-				roadmap: {
-					type: "nested",
-					properties: {
-						fields: {
-							type: "object",
-							properties: {
-								title: {
-									type: "string",
-								},
-								notes: {
-									type: "string",
-								},
-								version: {
-									type: "string",
-								},
-							},
-						},
-						uuid: {
-							index: "no",
-							type: "string",
+				"title": {
+					"type": "nested",
+					"properties": {
+						"value": {
+							"type": "string",
 						},
 					},
 				},
-				customItems: customItems,
-			},
-		},
-		meta: {
-			type: "object",
-			properties: {
-				activeLanguages: {
-					index: "no",
-					type: "string",
+				"intro": {
+					"type": "nested",
+					"properties": {
+						"value": {
+							"type": "string",
+						},
+					},
 				},
-				contentType: {
-					index: "no",
-					type: "string",
+				"about": {
+					"type": "nested",
+					"properties": {
+						"value": {
+							"type": "string",
+						},
+					},
 				},
-				created: {
-					index: "no",
-					type: "date",
-					format: "strict_date_optional_time||epoch_millis"
+				"roadmap": {
+					"type": "nested",
+					"properties": {
+						"title": {
+							"type": "string",
+						},
+						"notes": {
+							"type": "string",
+						},
+						"version": {
+							"type": "string",
+						}
+					}
 				},
-				lastModified: {
-					index: "no",
-					type: "date",
-					format: "strict_date_optional_time||epoch_millis"
+				"customItems": {
+					"type": "nested",
+					"properties": {
+						"body": {
+							"type": "string",
+						},
+						"title": {
+							"type": "string",
+						},
+						"uuid": {
+							"index": "no",
+							"type": "string",
+						},
+						"slug": {
+							"index": "no",
+							"type": "string",
+						},
+						"visibleFor": {
+							"type": "string",
+						},
+					},
 				},
-				publishDate: {
-					index: "no",
-					type: "date",
-					format: "strict_date_optional_time||epoch_millis"
+				"versionItems": {
+					"type": "nested",
+					"properties": {
+						"version": {
+							"type": "string",
+						},
+						"slug": {
+							"index": "no",
+							"type": "string",
+						},
+						"value": {
+							"type": "string",
+						},
+					},
 				},
-				slug: {
-					index: "no",
-					type: "string",
-				},
-				taxonomy: {
-					type: "object",
-					properties: {
-						tags: {
-							type: "nested",
-							properties: {
-								id: {
-									index: "no",
-									type: "string",
-								},
-								label: {
-									index: "no",
-									type: "string",
-								},
-							},
+				"apiS": {
+					"type": "nested",
+					"properties": {
+						"version": {
+							"type": "string",
+						},
+						"apiSlug": {
+							"index": "no",
+							"type": "string",
+						},
+						"slug": {
+							"index": "no",
+							"type": "string",
+						},
+						"value": {
+							"type": "string",
 						},
 					},
 				},
 			},
 		},
-		uuid: {
-			index: "no",
-			type: "string",
+		"meta": {
+			"type": "object",
+			"properties": {
+				"contentType": {
+					"index": "no",
+					"type": "string",
+				},
+				"slug": {
+					"index": "no",
+					"type": "string",
+				},
+			},
+		},
+		"uuid": {
+			"index": "no",
+			"type": "string",
 		},
 	},
 };
