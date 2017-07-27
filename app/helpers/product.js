@@ -6,8 +6,11 @@ var _ = require("lodash");
 
 var ContentModel = require("app/models/content");
 var PopulateHelper = require("app/helpers/populate");
-var contentTypes = require("./contentTypes");
 var index = require("../config/mappings").index;
+var language = require("../config/language").lang;
+var contentTypes = require("./contentTypes");
+var versionHelper = require("./version");
+var customItemsHelper = require("./customItems");
 
 var contentMongoQuery = {
 	"meta.contentType": contentTypes.product,
@@ -34,9 +37,35 @@ function fetchContent(query, fields) {
 		.then(function(item) {
 			return PopulateHelper.fields.one(item, {
 				populate: "customItems,roadmap",
+				lang: language, // @todo: get language from request
+			}).then(function(pItem) {
+				pItem.customItems = pItem.fields.customItems.map(function(i) {
+					return i.value;
+				});
+				delete pItem.fields.customItems;
+
+				pItem.fields.roadmap = pItem.fields.roadmap.map(function(i) {
+					return i.value;
+				});
+
+				return pItem;
 			});
 		}, function(err) {
 			throw err;
+		})
+		.then(function(item) {
+			return versionHelper.fetchVersions(item.fields.versionsOverview.uuid, item.uuid)
+				.then(function(response) {
+					item.versionItems = response.versionItems;
+					item.apiS = response.apiS;
+					item.customItems = item.customItems.concat(response.customItems).filter(function(i) {
+						return !!_.get(i, "fields.body");
+					});
+
+					return item;
+				}, function(err) {
+					throw err;
+				});
 		});
 }
 
@@ -53,15 +82,40 @@ function fetchProduct(uuid) {
 	);
 }
 
+function transformField(field) {
+	return {
+		value: field,
+	};
+}
+
 function transformProduct(product) {
 	return {
 		uuid: product.uuid,
 		fields: {
-			title: product.fields.title,
-			intro: product.fields.intro,
-			about: product.fields.about,
-			roadmap: product.fields.roadmap,
-			customItems: product.fields.customItems,
+			productCategory: product.fields.productCategory,
+			title: transformField(product.fields.title),
+			intro: transformField(product.fields.intro),
+			about: transformField(product.fields.about),
+			roadmap: product.fields.roadmap.map(function(item) {
+				return {
+					title: item.fields.title,
+					notes: item.fields.notes,
+					version: item.fields.version,
+				};
+			}),
+			customItems: product.customItems.map(function(item) {
+				return {
+					body: item.fields.body,
+					title: item.fields.title,
+					uuid: item.uuid,
+					slug: item.meta.slug,
+					visibleFor: item.fields.visibleFor,
+					version: item.version,
+					api: item.api,
+				};
+			}),
+			versionItems: product.versionItems,
+			apiS: product.apiS,
 		},
 		meta: {
 			activeLanguages: product.meta.activeLanguages,
@@ -69,7 +123,7 @@ function transformProduct(product) {
 			created: product.meta.created,
 			lastModified: product.meta.lastModified,
 			publishDate: product.meta.publishDate,
-			slug: product.meta.slug.nl, // @todo: return slug for active language
+			slug: product.meta.slug[language], // @todo: return slug for active language
 			taxonomy: {
 				tags: product.meta.taxonomy.tags,
 			},
@@ -77,7 +131,22 @@ function transformProduct(product) {
 	};
 }
 
+function productExists(uuid, elasticsearch) {
+	return elasticsearch.exists({
+		index: index,
+		type: "product",
+		id: uuid,
+	});
+}
+
 function syncProduct(product, elasticsearch) {
+	return productExists(product.uuid, elasticsearch)
+		.then(function(exists) {
+			return exists ? updateProduct(product, elasticsearch) : createProduct(product, elasticsearch);
+		});
+}
+
+function createProduct(product, elasticsearch) {
 	return elasticsearch.create({
 		index: index,
 		type: "product",
