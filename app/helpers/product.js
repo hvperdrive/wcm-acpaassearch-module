@@ -131,17 +131,27 @@ function transformProduct(product) {
 }
 
 function productExists(uuid, elasticsearch) {
-	return elasticsearch.exists({
+	var d = Q.defer();
+
+	elasticsearch.exists({
 		index: index,
 		type: "product",
 		id: uuid,
+	}).then(function(err, exists) {
+		d.resolve();
+	}, function(err, exists) {
+		d.reject();
 	});
+
+	return d.promise;
 }
 
 function syncProduct(product, elasticsearch) {
 	return productExists(product.uuid, elasticsearch)
 		.then(function(exists) {
-			return exists ? updateProduct(product, elasticsearch) : createProduct(product, elasticsearch);
+			return updateProduct(product, elasticsearch);
+		}, function(err) {
+			return createProduct(product, elasticsearch);
 		});
 }
 
