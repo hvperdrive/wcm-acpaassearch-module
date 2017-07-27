@@ -10,11 +10,11 @@ var actions = {
 		sync: productHelper.syncProduct,
 		remove: productHelper.removeProduct,
 	},
-	version: {
-		fetch: versionHelper.fetchVersion,
-		sync: versionHelper.syncVersion,
-		remove: versionHelper.removeVersion,
-	},
+	// version: {
+	// 	fetch: versionHelper.fetchVersion,
+	// 	sync: versionHelper.syncVersion,
+	// 	remove: versionHelper.removeVersion,
+	// },
 };
 
 function verifyAction(action, contentType) {
