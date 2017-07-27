@@ -107,7 +107,7 @@ function transformProduct(product) {
 					body: item.fields.body,
 					title: item.fields.title,
 					uuid: item.uuid,
-					slug: item.meta.slug,
+					slug: languageHelper.verifyMultilanguage(item.meta.slug), // @todo: return slug for active language
 					visibleFor: item.fields.visibleFor,
 					version: item.version,
 					api: item.api,
@@ -122,7 +122,7 @@ function transformProduct(product) {
 			created: product.meta.created,
 			lastModified: product.meta.lastModified,
 			publishDate: product.meta.publishDate,
-			slug: product.meta.slug[language], // @todo: return slug for active language
+			slug: languageHelper.verifyMultilanguage(product.meta.slug), // @todo: return slug for active language
 			taxonomy: {
 				tags: product.meta.taxonomy.tags,
 			},
