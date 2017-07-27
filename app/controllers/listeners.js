@@ -7,14 +7,12 @@ var versionHelper = require("../helpers/version");
 var actions = {
 	product: {
 		fetch: productHelper.fetchProduct,
-		create: productHelper.syncProduct,
-		update: productHelper.updateProduct,
+		sync: productHelper.syncProduct,
 		remove: productHelper.removeProduct,
 	},
 	version: {
 		fetch: versionHelper.fetchVersion,
-		create: versionHelper.syncVersion,
-		update: versionHelper.updateVersion,
+		sync: versionHelper.syncVersion,
 		remove: versionHelper.removeVersion,
 	},
 };
@@ -53,11 +51,11 @@ function handleUpdate(contentItem, action) {
 
 module.exports.start = function start() {
 	Emitter.on("contentCreated", function(contentItem) {
-		handleUpdate(contentItem, "create");
+		handleUpdate(contentItem, "sync");
 	});
 
 	Emitter.on("contentUpdated", function(contentItem) {
-		handleUpdate(contentItem, "update");
+		handleUpdate(contentItem, "sync");
 	});
 
 	Emitter.on("contentRemoved", function(contentItem) {
