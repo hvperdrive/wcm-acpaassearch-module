@@ -43,6 +43,13 @@
                             "value": "a-search",
                             "type": "text",
                             "required": true
+                        },
+                        {
+                            "label": "Elastic indexable content types",
+                            "description": "The content types to index (comma separated safeLabels)",
+                            "key": "contentTypes",
+                            "value": "product,product_doc_version,api,basic_page,timeline_item",
+                            "required": true
                         }
                     ]
                 }
