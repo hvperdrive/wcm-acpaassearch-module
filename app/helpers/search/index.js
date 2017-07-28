@@ -49,6 +49,25 @@ module.exports.getSuggestQuery = function getSuggestQuery(query, limit, type) {
 	};
 };
 
+module.exports.getCategoryQuery = function getCategoryQuery(query, category, skip, limit, type) {
+	return {
+		from: skip,
+		size: limit || 10000,
+		query: {
+			"dis_max": {
+				queries: [].concat(
+					productSearchHelper.getQuery(query, type)
+				),
+			},
+		},
+		filter: {
+			term: {
+				"fields.productCategory": category,
+			},
+		},
+	};
+};
+
 module.exports.resultMapper = function resultMapper(result) {
 	return mappers.mapResults(result);
 };

@@ -1,6 +1,6 @@
 {
     "name": "wcm-acpaassearch-module",
-    "version": "0.0.16",
+    "version": "0.0.19",
     "description": "Search module for AcPaaS Portal",
     "main": "app/routes/index.js",
     "scripts": {
@@ -32,7 +32,7 @@
                             "label": "Elastic port",
                             "description": "Port of the elastic server",
                             "key": "port",
-                            "value": "9200",
+                            "value": 9200,
                             "type": "number",
                             "required": true
                         },
