@@ -4,25 +4,25 @@ var Emitter = require("app/middleware/emitter");
 
 var contentTypes = require("../helpers/contentTypes");
 var productHelper = require("../helpers/product");
-var versionHelper = require("../helpers/version");
 
 var actions = {
 	product: {
 		fetch: productHelper.fetchProduct,
 		sync: productHelper.syncProduct,
 		remove: productHelper.removeProduct,
-	},
-	// version: {
-	// 	fetch: versionHelper.fetchVersion,
-	// 	sync: versionHelper.syncVersion,
-	// 	remove: versionHelper.removeVersion,
-	// },
+	}
 };
 
 function verifyAction(action, contentType) {
-	return actions.hasOwnProperty(contentType.type) ? actions[contentType.type][action] : function() {
-		return Q.reject("NO ACTION \"" + action + "\" FOUND FOR TYPE \"" + contentType.type + "\"");
-	};
+	if (actions.hasOwnProperty(contentType.type) && actions[contentType.type].hasOwnProperty(action)) {
+		return actions[contentType.type][action];
+	}
+
+	if (actions.hasOwnProperty(action)) {
+		return actions[action];
+	}
+
+	return null;
 }
 
 function handleUpdate(contentItem, action) {
@@ -30,19 +30,22 @@ function handleUpdate(contentItem, action) {
 
 	if (!contentType) {
 		return console.log("CONTENTTYPE NOT ALLOWED", contentType);
-    }
+	}
 
+	var elasticsearch = require("../helpers/elastic");
 	var syncAction = verifyAction(action, contentType);
 	var fetchAction = verifyAction("fetch", contentType);
 
 	if (!syncAction) {
-		return console.log("ACTION NOT ALLOWED", action);
+		return productHelper.fetchProductsForDoc(contentItem, elasticsearch)
+			.then(function(products) {
+				console.log("SYNCING PRODUCTS", products);
+				return productHelper.syncProducts(products, elasticsearch);
+			});
 	}
 
-	var elasticsearch = require("../helpers/elastic");
-
 	if (fetchAction) {
-		return fetchAction(contentItem.uuid)
+		return fetchAction(contentItem)
 			.then(function(populatedContent) {
 				syncAction(populatedContent, elasticsearch);
 			}, function(err) {
@@ -55,14 +58,26 @@ function handleUpdate(contentItem, action) {
 
 module.exports.start = function start() {
 	Emitter.on("contentCreated", function(contentItem) {
-		handleUpdate(contentItem, "sync");
+		try {
+			handleUpdate(contentItem, "sync");
+		} catch (err) {
+			console.log(err);
+		}
 	});
 
 	Emitter.on("contentUpdated", function(contentItem) {
-		handleUpdate(contentItem, "sync");
+		try {
+			handleUpdate(contentItem, "sync");
+		} catch (err) {
+			console.log(err);
+		}
 	});
 
 	Emitter.on("contentRemoved", function(contentItem) {
-		handleUpdate(contentItem, "remove");
+		try {
+			handleUpdate(contentItem, "remove");
+		} catch (err) {
+			console.log(err);
+		}
 	});
 };
