@@ -9,6 +9,7 @@ var languageHelper = require("./language");
 
 var contentMongoQuery = {
 	"meta.contentType": contentTypes.customItem,
+	"meta.published": true,
 	"fields.body": {
 		$exists: true,
 	},

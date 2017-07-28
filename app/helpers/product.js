@@ -12,6 +12,7 @@ var versionHelper = require("./version");
 
 var contentMongoQuery = {
 	"meta.contentType": contentTypes.product,
+	"meta.published": true,
 };
 var contentMongoFields = {
 	_id: 0,

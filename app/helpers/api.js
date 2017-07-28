@@ -9,6 +9,7 @@ var language = require("../config/language").lang;
 
 var contentMongoQuery = {
 	"meta.contentType": contentTypes.api,
+	"meta.published": true,
 };
 var contentMongoFields = {
 	_id: 0,

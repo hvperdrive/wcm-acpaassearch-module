@@ -18,6 +18,7 @@ var contentMongoFields = {
 	uuid: 1,
 	fields: 1,
 	"meta.contentType": 1,
+	"meta.published": true,
 };
 
 function fetchContent(query, fields) {
