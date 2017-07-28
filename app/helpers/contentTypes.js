@@ -1,11 +1,12 @@
 "use strict";
 
-var contentTypes = {
-	product: "5937cddde77a130b15f572d2", // @todo: remove dummy
-	version: "593eb706aef3a98476c03ba6", // @todo: remove dummy
-	api: "593eb572aef3a98476c03ba1", // @todo: remove dummy
-	customItem: "594d007618b95d24255ea2ec", // @todo: remove dummy
-};
+require("rootpath")();
+var _ = require("lodash");
+
+var ContentTypeModel = require("app/models/contentType");
+var variablesHelper = require("./variables");
+
+var contentTypes = {};
 
 var toList = function(types) {
 	return Object.keys(types).reduce(function(acc, curr) {
@@ -20,14 +21,35 @@ var toList = function(types) {
 
 module.exports = contentTypes;
 
-module.exports.reload = function(uuids) {
-	// @todo: fetch contentTypes & store mongo id
+module.exports.reload = function() {
+	variablesHelper.reload()
+		.then(function(variables) {
+			var safeLabels = _.get(variables, "acpaassearch.variables.contentTypes", []).split(",");
+
+			ContentTypeModel
+				.find({
+					"meta.deleted": false,
+					"meta.safeLabel": {
+						$in: safeLabels,
+					},
+				})
+				.lean()
+				.exec()
+				.then(function(types) {
+					contentTypes = types.reduce(function(acc, type) {
+						acc[type.meta.safeLabel] = type._id.toString();
+						return acc;
+					}, {});
+				}, function(err) {
+					throw err;
+				});
+		});
 };
 
 module.exports.verifyType = function(type) {
-	type = typeof type === "string" ? type : type._id;
+    type = typeof type === "string" ? type : type._id;
 
 	return toList(contentTypes).find(function(t) {
 		return t.id === type.toString();
 	});
-}
+};
