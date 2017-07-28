@@ -125,6 +125,7 @@ function transformProduct(product) {
 			title: transformField(product.fields.title),
 			intro: transformField(product.fields.intro),
 			about: transformField(product.fields.about),
+			gettingStarted: transformField(product.fields.gettingStarted),
 			roadmap: product.fields.roadmap.map(function(item) {
 				return {
 					title: languageHelper.verifyMultilanguage(item.fields.title),
