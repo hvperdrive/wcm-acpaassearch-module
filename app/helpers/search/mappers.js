@@ -2,6 +2,7 @@ var _ = require("lodash");
 
 var generateTopHitSlug = function generateTopHitSlug(topHit, productSlug) {
 	var topHitSource = _.get(topHit, "_source", {});
+	var emptyKeys = ["title", "intro"];
 
 	switch (topHit._key) {
 		case "apiS":
@@ -18,7 +19,7 @@ var generateTopHitSlug = function generateTopHitSlug(topHit, productSlug) {
 				topHitSource.slug;
 		default:
 			return "/" + productSlug + "/" +
-				topHit._key;
+				(emptyKeys.indexOf(topHit._key) >= 0 ? "" : topHit._key);
 	}
 };
 
