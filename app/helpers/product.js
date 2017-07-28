@@ -128,6 +128,7 @@ function transformProduct(product) {
 			gettingStarted: transformField(product.fields.gettingStarted),
 			roadmap: product.fields.roadmap.map(function(item) {
 				return {
+					uuid: item.uuid,
 					title: languageHelper.verifyMultilanguage(item.fields.title),
 					notes: languageHelper.verifyMultilanguage(item.fields.notes),
 					version: languageHelper.verifyMultilanguage(item.fields.version),
