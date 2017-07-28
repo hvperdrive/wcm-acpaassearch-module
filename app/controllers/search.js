@@ -7,20 +7,51 @@ module.exports.search = function search(req, res) {
 	var q = req.query.q || req.query.query;
 
 	if (!q) {
-		return res.status(400).json({ err: "No query parameter 'q' found in the request." });
+		return res.status(400).json({
+			err: "No query parameter 'q' found in the request.",
+		});
 	}
 
 	elasticClient.client.search({
 		index: variables.acpaassearch.variables.index,
 		type: ["product"],
-		body: SearchHelper.getQuery(q, null),
+		body: SearchHelper.getQuery(q, req.query.limit, null),
 	})
 		.then(
 			function onSuccess(result) {
 				res.status(200).json(SearchHelper.resultMapper(result));
 			},
 			function onError(responseError) {
-				res.status(500).json({ err: responseError });
+				res.status(500).json({
+					err: responseError,
+				});
+			}
+		);
+};
+
+module.exports.suggest = function suggest(req, res) {
+	var variables = variablesHelper();
+	var q = req.query.q || req.query.query;
+
+	if (!q) {
+		return res.status(400).json({
+			err: "No query parameter 'q' found in the request.",
+		});
+	}
+
+	elasticClient.client.search({
+		index: variables.acpaassearch.variables.index,
+		type: ["product"],
+		body: SearchHelper.getSuggestQuery(q, req.query.limit, null),
+	})
+		.then(
+			function onSuccess(result) {
+				res.status(200).json(SearchHelper.suggestMapper(result));
+			},
+			function onError(responseError) {
+				res.status(500).json({
+					err: responseError,
+				});
 			}
 		);
 };
