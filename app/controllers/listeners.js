@@ -18,7 +18,7 @@ var actions = {
 };
 
 function verifyAction(action, contentType) {
-	return actions.hasOwnProperty(contentType.type) ? actions[contentType.type][action] : function () {};
+	return actions.hasOwnProperty(contentType.type) ? actions[contentType.type][action] : function() {};
 }
 
 function handleUpdate(contentItem, action) {
@@ -40,13 +40,13 @@ function handleUpdate(contentItem, action) {
 	if (fetchAction) {
 		return fetchAction(contentItem.uuid)
 			.then(function(populatedContent) {
-				syncAction(populatedContent, elasticsearch.client);
+				syncAction(populatedContent, elasticsearch);
 			}, function(err) {
 				throw err;
 			});
 	}
 
-	syncAction(contentItem, elasticsearch.client);
+	syncAction(contentItem, elasticsearch);
 }
 
 module.exports.start = function start() {
