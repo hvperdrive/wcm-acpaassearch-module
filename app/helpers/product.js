@@ -6,7 +6,6 @@ var _ = require("lodash");
 
 var ContentModel = require("app/models/content");
 var PopulateHelper = require("app/helpers/populate");
-var index = require("../config/mappings").index;
 var languageHelper = require("../helpers/language");
 var contentTypes = require("./contentTypes");
 var versionHelper = require("./version");
@@ -160,8 +159,8 @@ function syncProduct(product, elasticsearch) {
 }
 
 function createProduct(product, elasticsearch) {
-	return elasticsearch.create({
-		index: index,
+	return elasticsearch.client.create({
+		index: elasticsearch.index,
 		type: "product",
 		id: product.uuid,
 		body: transformProduct(product),
@@ -169,8 +168,8 @@ function createProduct(product, elasticsearch) {
 }
 
 function updateProduct(product, elasticsearch) {
-	return elasticsearch.update({
-		index: index,
+	return elasticsearch.client.update({
+		index: elasticsearch.index,
 		type: "product",
 		id: product.uuid,
 		body: transformProduct(product), // @todo: partial update
@@ -178,8 +177,8 @@ function updateProduct(product, elasticsearch) {
 }
 
 function removeProduct(product, elasticsearch) {
-	return elasticsearch.delete({
-		index: index,
+	return elasticsearch.client.delete({
+		index: elasticsearch.index,
 		type: "product",
 		id: product.uuid,
 	});

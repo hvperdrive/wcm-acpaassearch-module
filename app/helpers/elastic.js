@@ -2,7 +2,7 @@
 
 require("rootpath")();
 var elasticsearch = require("elasticsearch");
-var index = require("../config/mappings");
+var mappings = require("../config/mappings");
 var variablesHelper = require("../helpers/variables");
 var indicesHelper = require("./indices");
 
@@ -21,6 +21,7 @@ var initiateClient = function initiateClient() {
 
 			host = variables.acpaassearch.variables.host + ":" + (variables.acpaassearch.variables.port || 9200);
 
+			me.index = variables.acpaassearch.variables.index || "custom-index_" + Date.now();
 			me.client = new elasticsearch.Client({
 				host: host,
 				log: log,
@@ -37,7 +38,10 @@ var initiateClient = function initiateClient() {
 
 				me.connected = true;
 
-				indicesHelper.create(me.client, index);
+				indicesHelper.create(me.client, {
+					index: me.index,
+					mappings: mappings,
+				});
 			});
 		});
 };
@@ -45,6 +49,7 @@ var initiateClient = function initiateClient() {
 function ElasticClient() {
 	this.client = null;
 	this.connected = false;
+	this.index = null;
 
 	initiateClient.call(this);
 }
