@@ -27,12 +27,52 @@ var contentMongoFields = {
 	"meta.taxonomy": 1,
 };
 
-function fetchContent(query, fields) {
+function fetchOne(query, fields) {
 	return ContentModel
 		.findOne(query, fields)
 		.populate("meta.contentType")
 		.lean()
 		.exec()
+		.then(function(response) {
+			return response;
+		}, function(err) {
+			throw err;
+		});
+}
+
+function fetchContent(query, fields) {
+	return ContentModel
+		.find(query, fields)
+		.populate("meta.contentType")
+		.lean()
+		.exec()
+		.then(function(response) {
+			return response;
+		}, function(err) {
+			throw err;
+		});
+}
+
+function fetchProducts() {
+	return fetchContent(contentMongoQuery, {
+			uuid: 1
+		})
+		.then(function(products) {
+			return products.map(function(product) {
+				return product.uuid;
+			});
+		}, function(err) {
+			throw err;
+		});
+}
+
+function fetchProduct(uuid) {
+	return fetchOne(
+			_.assign(contentMongoQuery, {
+				uuid: uuid,
+			}),
+			contentMongoFields
+		)
 		.then(function(item) {
 			return PopulateHelper.fields.one(item, {
 				populate: "customItems,roadmap",
@@ -66,19 +106,6 @@ function fetchContent(query, fields) {
 					throw err;
 				});
 		});
-}
-
-function fetchProducts() {
-	return fetchContent(contentMongoQuery, contentMongoFields);
-}
-
-function fetchProduct(uuid) {
-	return fetchContent(
-		_.assign(contentMongoQuery, {
-			uuid: uuid,
-		}),
-		contentMongoFields
-	);
 }
 
 function transformField(field) {
