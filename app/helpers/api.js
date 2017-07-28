@@ -42,6 +42,7 @@ function fetchApiS(uuids) {
 					api: api.meta.slug[language],
 					apiUuid: api.uuid,
 					uuid: item.value,
+					visibleFor: api.fields.visibleFor,
 				};
 			});
 		}));
@@ -62,6 +63,7 @@ function fetchApiS(uuids) {
 
 					item.api = api.api;
 					item.apiUuid = api.apiUuid;
+					item.fields.visibleFor = checkVisibility([item.fields.visibleFor, api.visibleFor]);
 
 					return item;
 				});
@@ -72,6 +74,18 @@ function fetchApiS(uuids) {
 	}, function(err) {
 		throw err;
 	});
+}
+
+function checkVisibility(fields) {
+	var values = ["allProfiles", "aProfiles", "mProfiles"];
+
+	var value = fields.reduce(function(acc, field) {
+		var fieldIndex = values.indexOf(field);
+
+		return fieldIndex > acc ? fieldIndex : acc;
+	}, -1);
+
+	return value >= 0 ? values[value] : "invisible";
 }
 
 module.exports = {
