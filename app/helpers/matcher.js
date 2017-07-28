@@ -64,10 +64,6 @@ var typeMatchers = [{
 		};
 	},
 	value: "uuid",
-}, {
-	label: "main_documentation",
-	field: "uuid",
-	match: "uuid",
 }];
 
 module.exports.getMatcherForType = function(contentType, doc) {

@@ -37,6 +37,10 @@ function handleUpdate(contentItem, action) {
 	var fetchAction = verifyAction("fetch", contentType);
 
 	if (!syncAction) {
+		if (contentType.type === "main_documentation") {
+			return console.log("INDEX MAIN DOCUMENTATION");
+		}
+
 		return productHelper.fetchProductsForDoc(contentItem, elasticsearch)
 			.then(function(products) {
 				return productHelper.syncProducts(products, elasticsearch);
