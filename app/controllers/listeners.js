@@ -1,3 +1,5 @@
+var Q = require("q");
+
 var Emitter = require("app/middleware/emitter");
 
 var contentTypes = require("../helpers/contentTypes");
@@ -18,7 +20,9 @@ var actions = {
 };
 
 function verifyAction(action, contentType) {
-	return actions.hasOwnProperty(contentType.type) ? actions[contentType.type][action] : function() {};
+	return actions.hasOwnProperty(contentType.type) ? actions[contentType.type][action] : function() {
+		return Q.reject("NO ACTION \"" + action + "\" FOUND FOR TYPE \"" + contentType.type + "\"");
+	};
 }
 
 function handleUpdate(contentItem, action) {
