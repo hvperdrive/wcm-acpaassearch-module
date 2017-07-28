@@ -31,6 +31,14 @@ module.exports = {
 						},
 					},
 				},
+				"gettingStarted": {
+					"type": "nested",
+					"properties": {
+						"value": {
+							"type": "string",
+						},
+					},
+				},
 				"roadmap": {
 					"type": "nested",
 					"properties": {
@@ -42,8 +50,12 @@ module.exports = {
 						},
 						"version": {
 							"type": "string",
-						}
-					}
+						},
+						"uuid": {
+							"index": "not_analyzed",
+							"type": "string",
+						},
+					},
 				},
 				"customItems": {
 					"type": "nested",
@@ -55,7 +67,7 @@ module.exports = {
 							"type": "string",
 						},
 						"uuid": {
-							"index": "no",
+							"index": "not_analyzed",
 							"type": "string",
 						},
 						"slug": {
@@ -63,6 +75,7 @@ module.exports = {
 							"type": "string",
 						},
 						"visibleFor": {
+							"index": "not_analyzed",
 							"type": "string",
 						},
 					},
@@ -97,6 +110,10 @@ module.exports = {
 							"type": "string",
 						},
 						"value": {
+							"type": "string",
+						},
+						"uuid": {
+							"index": "not_analyzed",
 							"type": "string",
 						},
 					},
