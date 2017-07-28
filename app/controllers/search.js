@@ -17,20 +17,20 @@ var getQuery = function getQuery(req) {
 };
 var getLimit = function getLimit(req) {
     // Total request cannot be bigger then 10000 (Elastic weardness).
-    var limit = req.query.limit ? parseInt(req.query.limit) : 10000;
-    var skip = req.query.skip ? parseInt(req.query.skip) : 0;
+	var limit = req.query.limit ? parseInt(req.query.limit) : 10000;
+	var skip = req.query.skip ? parseInt(req.query.skip) : 0;
 
-    if (isNaN(skip)) {
-        skip = 0;
-    }
+	if (isNaN(skip)) {
+		skip = 0;
+	}
 
-    if(isNaN(limit)) {s
-        limit = 10000;
-    }
+	if (isNaN(limit)) {
+		limit = 10000;
+	}
 
-    if ((skip + limit) > 10000) {
-        limit -= skip + limit - 10000;
-    }
+	if ((skip + limit) > 10000) {
+		limit -= skip + limit - 10000;
+	}
 
 	return limit;
 };
