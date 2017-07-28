@@ -26,7 +26,7 @@ module.exports = function getContentTypes() {
 module.exports.reload = function() {
 	variablesHelper.reload()
 		.then(function(variables) {
-			var safeLabels = _.get(variables, "acpaassearch.variables.contentTypes", []).split(",");
+			var safeLabels = _.get(variables, "acpaassearch.variables.contentTypes", "").split(",");
 
 			ContentTypeModel
 				.find({
@@ -49,7 +49,7 @@ module.exports.reload = function() {
 };
 
 module.exports.verifyType = function(type) {
-    type = typeof type === "string" ? type : type._id;
+	type = typeof type === "string" ? type : type._id;
 
 	return toList(contentTypes).find(function(t) {
 		return t.id === type.toString();
