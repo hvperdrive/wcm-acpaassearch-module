@@ -55,15 +55,15 @@ function fetchContent(query, fields) {
 
 function fetchProducts() {
 	return fetchContent(contentMongoQuery, {
-			uuid: 1
-		})
-		.then(function(products) {
-			return products.map(function(product) {
-				return product.uuid;
-			});
-		}, function(err) {
-			throw err;
+		uuid: 1,
+	})
+	.then(function(products) {
+		return products.map(function(product) {
+			return product.uuid;
 		});
+	}, function(err) {
+		throw err;
+	});
 }
 
 function fetchProduct(uuid) {
@@ -212,9 +212,14 @@ function removeProduct(product, elasticsearch) {
 	});
 }
 
-function syncProducts(syncNonModified, products, elasticsearch) {
+function syncProducts(products, elasticsearch) {
 	return Q.all(products.map(function(product) {
-		return syncProduct(product, elasticsearch);
+		return fetchProduct(product)
+			.then(function(populatedProduct) {
+				return syncProduct(populatedProduct, elasticsearch);
+			}, function(err) {
+				throw err;
+			});
 	}));
 }
 

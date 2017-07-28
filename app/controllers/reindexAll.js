@@ -3,9 +3,7 @@
 var syncAll = require("../helpers/syncAll");
 
 module.exports = function(req, res) {
-	var syncNonModified = req.query.all === "true";
-
-	// syncAll(syncNonModified);
+	syncAll();
 
 	res.status(200).json({
 		msg: "Reindex started...",
