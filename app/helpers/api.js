@@ -7,10 +7,12 @@ var contentTypes = require("./contentTypes");
 var customItemsHelper = require("./customItems");
 var language = require("../config/language").lang;
 
-var contentMongoQuery = {
-	"meta.contentType": contentTypes().api,
-	"meta.published": true,
-	"meta.deleted": false,
+var contentMongoQuery = function() {
+	return {
+		"meta.contentType": contentTypes().api,
+		"meta.published": true,
+		"meta.deleted": false,
+	};
 };
 var contentMongoFields = {
 	_id: 0,
@@ -21,7 +23,7 @@ var contentMongoFields = {
 };
 
 function fetchApiS(uuids) {
-	return ContentModel.find(_.assign(contentMongoQuery, {
+	return ContentModel.find(_.assign(contentMongoQuery(), {
 		uuid: {
 			$in: uuids,
 		},
