@@ -3,7 +3,7 @@ var syncAll = require("../helpers/syncAll");
 
 function ElasticCron() {
 	this.cronJob = cron.schedule("0 0 1 * *", function() {
-        syncAll();
+		syncAll();
 	}, false);
 }
 
@@ -16,5 +16,3 @@ ElasticCron.prototype.stop = function() {
 };
 
 module.exports = new ElasticCron();
-
-

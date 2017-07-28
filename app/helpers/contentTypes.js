@@ -19,7 +19,9 @@ var toList = function(types) {
 	}, []);
 };
 
-module.exports = contentTypes;
+module.exports = function getContentTypes() {
+	return contentTypes;
+};
 
 module.exports.reload = function() {
 	variablesHelper.reload()

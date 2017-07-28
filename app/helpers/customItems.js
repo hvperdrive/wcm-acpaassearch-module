@@ -1,18 +1,20 @@
 "use strict";
 
-var Q = require("q");
 var _ = require("lodash");
 
 var ContentModel = require("app/models/content");
 var contentTypes = require("./contentTypes");
 var languageHelper = require("./language");
 
-var contentMongoQuery = {
-	"meta.contentType": contentTypes.customItem,
-	"meta.published": true,
-	"fields.body": {
-		$exists: true,
-	},
+var contentMongoQuery = function() {
+	return {
+		"meta.contentType": contentTypes().basic_page,
+		"meta.published": true,
+		"meta.deleted": false,
+		"fields.body": {
+			$exists: true,
+		},
+	};
 };
 var contentMongoFields = {
 	_id: 0,
@@ -23,7 +25,7 @@ var contentMongoFields = {
 };
 
 function fetchCustomItems(uuids) {
-	return ContentModel.find(_.assign(contentMongoQuery, {
+	return ContentModel.find(_.assign(contentMongoQuery(), {
 		uuid: {
 			$in: uuids,
 		},

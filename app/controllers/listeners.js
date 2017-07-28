@@ -30,7 +30,7 @@ function handleUpdate(contentItem, action) {
 
 	if (!contentType) {
 		return console.log("CONTENTTYPE NOT ALLOWED", contentType);
-	}
+    }
 
 	var syncAction = verifyAction(action, contentType);
 	var fetchAction = verifyAction("fetch", contentType);

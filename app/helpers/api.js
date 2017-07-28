@@ -8,8 +8,9 @@ var customItemsHelper = require("./customItems");
 var language = require("../config/language").lang;
 
 var contentMongoQuery = {
-	"meta.contentType": contentTypes.api,
+	"meta.contentType": contentTypes().api,
 	"meta.published": true,
+	"meta.deleted": false,
 };
 var contentMongoFields = {
 	_id: 0,

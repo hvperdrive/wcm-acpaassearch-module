@@ -10,8 +10,10 @@ var index = require("../config/mappings").index;
 var apiHelper = require("./api");
 var populateHelper = require("app/helpers/populate");
 
-var contentMongoQuery = {
-	"meta.contentType": contentTypes.version,
+var contentMongoQuery = function() {
+	return {
+		"meta.contentType": contentTypes().product_doc_version,
+	};
 };
 var contentMongoFields = {
 	_id: 0,
@@ -19,6 +21,7 @@ var contentMongoFields = {
 	fields: 1,
 	"meta.contentType": 1,
 	"meta.published": true,
+	"meta.deleted": false,
 };
 
 function fetchContent(query, fields) {
@@ -31,7 +34,7 @@ function fetchContent(query, fields) {
 
 function fetchVersion(uuid) {
 	return fetchContent(
-		_.assign(contentMongoQuery, {
+		_.assign(contentMongoQuery(), {
 			uuid: uuid,
 		}),
 		contentMongoFields

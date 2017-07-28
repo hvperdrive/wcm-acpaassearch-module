@@ -10,9 +10,12 @@ var languageHelper = require("../helpers/language");
 var contentTypes = require("./contentTypes");
 var versionHelper = require("./version");
 
-var contentMongoQuery = {
-	"meta.contentType": contentTypes.product,
-	"meta.published": true,
+var contentMongoQuery = function() {
+	return {
+		"meta.contentType": contentTypes().product,
+		"meta.published": true,
+		"meta.deleted": false,
+	};
 };
 var contentMongoFields = {
 	_id: 0,
@@ -54,7 +57,7 @@ function fetchContent(query, fields) {
 }
 
 function fetchProducts() {
-	return fetchContent(contentMongoQuery, {
+	return fetchContent(contentMongoQuery(), {
 		uuid: 1,
 	})
 	.then(function(products) {
@@ -68,7 +71,7 @@ function fetchProducts() {
 
 function fetchProduct(uuid) {
 	return fetchOne(
-			_.assign(contentMongoQuery, {
+			_.assign(contentMongoQuery(), {
 				uuid: uuid,
 			}),
 			contentMongoFields
