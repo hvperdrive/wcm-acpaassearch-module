@@ -1,7 +1,7 @@
 var config = require("../config/language");
 
 module.exports.verifyMultilanguage = function(value) {
-	return typeof value === "string" ? value : value[config.lang]
+	return Object(value) === value && value.hasOwnProperty("multiLanguage") ? value[config.lang] : value;
 };
 
 module.exports.currentLanguage = function() {
