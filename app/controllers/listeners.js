@@ -39,7 +39,6 @@ function handleUpdate(contentItem, action) {
 	if (!syncAction) {
 		return productHelper.fetchProductsForDoc(contentItem, elasticsearch)
 			.then(function(products) {
-				console.log("SYNCING PRODUCTS", products);
 				return productHelper.syncProducts(products, elasticsearch);
 			});
 	}
