@@ -5,7 +5,7 @@ var _ = require("lodash");
 var ContentModel = require("app/models/content");
 var contentTypes = require("./contentTypes");
 var customItemsHelper = require("./customItems");
-var language = require("../config/language").lang;
+var languageHelper = require("./language");
 
 var contentMongoQuery = function() {
 	return {
@@ -39,7 +39,7 @@ function fetchApiS(uuids) {
 		var apiCustomItems = _.flattenDeep(apiS.map(function(api) {
 			return api.fields.customItems.map(function(item) {
 				return {
-					api: api.meta.slug[language],
+					api: languageHelper.verifyMultilanguage(api.meta.slug),
 					apiUuid: api.uuid,
 					uuid: item.value,
 					visibleFor: api.fields.visibleFor,

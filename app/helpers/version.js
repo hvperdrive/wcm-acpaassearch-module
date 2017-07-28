@@ -5,7 +5,7 @@ var _ = require("lodash");
 
 var ContentModel = require("app/models/content");
 var contentTypes = require("./contentTypes");
-var language = require("../config/language").lang;
+var languageHelper = require("./language");
 var index = require("../config/mappings").index;
 var apiHelper = require("./api");
 var populateHelper = require("app/helpers/populate");
@@ -47,7 +47,7 @@ function fetchVersion(uuid) {
 
 function fetchVersions(uuid, product) {
 	var settings = populateHelper.fields.getPopulatorConfig.view({
-		lang: language,
+		lang: languageHelper.currentLanguage(),
 		uuid: uuid,
 		"view.product_versions.product": product,
 	});
@@ -61,7 +61,7 @@ function fetchVersions(uuid, product) {
 		var result = {
 			versionItems: [],
 			apiS: [],
-			customItems: []
+			customItems: [],
 		};
 
 		if (viewResult.total === 0) {
@@ -71,9 +71,9 @@ function fetchVersions(uuid, product) {
 		result.versionItems = _.flatten(viewResult.data.map(function(version) {
 			return ["gettingStarted", "releaseNotes", "features", "architecture", "faq"].map(function(field) {
 				return {
-					version: version.fields.versionLabel,
+					version: languageHelper.verifyMultilanguage(version.fields.versionLabel),
 					slug: field,
-					value: version.fields[field]
+					value: languageHelper.verifyMultilanguage(version.fields[field]),
 				};
 			});
 		}));
@@ -81,7 +81,7 @@ function fetchVersions(uuid, product) {
 		var versionApiS = _.flattenDeep(viewResult.data.map(function(version) {
 			return version.fields.apiS.map(function(api) {
 				return {
-					version: version.fields.versionLabel,
+					version: languageHelper.verifyMultilanguage(version.fields.versionLabel),
 					api: api.value,
 				};
 			});
@@ -103,10 +103,10 @@ function fetchVersions(uuid, product) {
 
 					return {
 						version: version.version,
-						apiSlug: api.meta.slug[language],
+						apiSlug: languageHelper.verifyMultilanguage(api.meta.slug),
 						slug: "about",
-						value: api.fields.about,
-						title: api.fields.title,
+						value: languageHelper.verifyMultilanguage(api.fields.about),
+						title: languageHelper.verifyMultilanguage(api.fields.title),
 					};
 				});
 
@@ -133,13 +133,13 @@ function transformVersion(version) {
 	return {
 		uuid: version.uuid,
 		fields: {
-			versionLabel: version.fields.versionLabel,
-			architecture: version.fields.architecture,
-			faq: version.fields.faq,
-			features: version.fields.features,
-			gettingStarted: version.fields.gettingStarted,
-			releaseNotes: version.fields.releaseNotes,
-			apiS: version.fields.apiS,
+			versionLabel: languageHelper.verifyMultilanguage(version.fields.versionLabel),
+			architecture: languageHelper.verifyMultilanguage(version.fields.architecture),
+			faq: languageHelper.verifyMultilanguage(version.fields.faq),
+			features: languageHelper.verifyMultilanguage(version.fields.features),
+			gettingStarted: languageHelper.verifyMultilanguage(version.fields.gettingStarted),
+			releaseNotes: languageHelper.verifyMultilanguage(version.fields.releaseNotes),
+			apiS: languageHelper.verifyMultilanguage(version.fields.apiS),
 		},
 		meta: {
 			contentType: contentTypes.verifyType(version.meta.contentType).id,

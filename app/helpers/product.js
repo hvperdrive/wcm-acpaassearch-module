@@ -113,7 +113,7 @@ function fetchProduct(uuid) {
 
 function transformField(field) {
 	return {
-		value: field,
+		value: languageHelper.verifyMultilanguage(field),
 	};
 }
 
@@ -127,15 +127,15 @@ function transformProduct(product) {
 			about: transformField(product.fields.about),
 			roadmap: product.fields.roadmap.map(function(item) {
 				return {
-					title: item.fields.title,
-					notes: item.fields.notes,
-					version: item.fields.version,
+					title: languageHelper.verifyMultilanguage(item.fields.title),
+					notes: languageHelper.verifyMultilanguage(item.fields.notes),
+					version: languageHelper.verifyMultilanguage(item.fields.version),
 				};
 			}),
 			customItems: product.customItems.map(function(item) {
 				return {
-					body: item.fields.body,
-					title: item.fields.title,
+					body: languageHelper.verifyMultilanguage(item.fields.body),
+					title: languageHelper.verifyMultilanguage(item.fields.title),
 					uuid: item.uuid,
 					slug: languageHelper.verifyMultilanguage(item.meta.slug), // @todo: return slug for active language
 					visibleFor: item.fields.visibleFor,
