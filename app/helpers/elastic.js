@@ -38,7 +38,7 @@ var initiateClient = function initiateClient() {
 
 				me.connected = true;
 
-				indicesHelper.create(me.client, {
+				indicesHelper.createOrUpdate(me.client, {
 					index: me.index,
 					mappings: mappings,
 				});
