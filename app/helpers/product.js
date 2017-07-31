@@ -127,7 +127,7 @@ function transformProduct(product) {
 			intro: transformField(product.fields.intro),
 			about: transformField(product.fields.about),
 			gettingStarted: transformField(product.fields.gettingStarted),
-			roadmap: product.fields.roadmap.map(function(item) {
+			roadmap: _.get(product, "fields.roadmap", []).map(function(item) {
 				return {
 					uuid: item.uuid,
 					title: languageHelper.verifyMultilanguage(item.fields.title),
@@ -135,7 +135,7 @@ function transformProduct(product) {
 					version: languageHelper.verifyMultilanguage(item.fields.version),
 				};
 			}),
-			customItems: product.customItems.map(function(item) {
+			customItems: _.get(product, "customItems", []).map(function(item) {
 				return {
 					body: languageHelper.verifyMultilanguage(item.fields.body),
 					title: languageHelper.verifyMultilanguage(item.fields.title),
