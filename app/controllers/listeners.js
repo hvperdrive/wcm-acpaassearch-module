@@ -10,15 +10,16 @@ var actions = {
 		sync: productHelper.syncProduct,
 		remove: productHelper.removeProduct,
 	},
+	main_documentation: { // eslint-disable-line camelcase
+		fetch: docHelper.fetchDoc,
+		sync: productHelper.syncProduct,
+		remove: productHelper.removeProduct,
+	},
 };
 
 function verifyAction(action, contentType) {
 	if (actions.hasOwnProperty(contentType.type) && actions[contentType.type].hasOwnProperty(action)) {
 		return actions[contentType.type][action];
-	}
-
-	if (actions.hasOwnProperty(action)) {
-		return actions[action];
 	}
 
 	return null;
@@ -36,13 +37,6 @@ function handleUpdate(contentItem, action) {
 	var fetchAction = verifyAction("fetch", contentType);
 
 	if (!syncAction) {
-		if (contentType.type === "main_documentation") {
-			return docHelper.fetchDoc(contentItem, elasticsearch)
-				.then(function(doc) {
-					return productHelper.syncProduct(doc, elasticsearch);
-				});
-		}
-
 		return productHelper.fetchProductsForDoc(contentItem, elasticsearch)
 			.then(function(products) {
 				return productHelper.syncProducts(products, elasticsearch);
