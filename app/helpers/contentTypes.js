@@ -6,12 +6,12 @@ var _ = require("lodash");
 var ContentTypeModel = require("app/models/contentType");
 
 var safeLabels = [
-    "product",
-    "product_doc_version",
-    "api",
-    "basic_page",
-    "timeline_item",
-    "main_documentation",
+	"product",
+	"product_doc_version",
+	"api",
+	"basic_page",
+	"timeline_item",
+	"main_documentation",
 ];
 var contentTypes = {};
 
@@ -27,31 +27,31 @@ var toList = function(types) {
 };
 
 function reload() {
-    ContentTypeModel
-        .find({
-            "meta.deleted": false,
-            "meta.safeLabel": {
-                $in: safeLabels
-            },
-        })
-        .lean()
-        .exec()
-        .then(function(types) {
-            contentTypes = types.reduce(function(acc, type) {
-                acc[type.meta.safeLabel] = type._id.toString();
-                return acc;
-            }, {});
-        }, function(err) {
-            throw err;
-        });
+	ContentTypeModel
+		.find({
+			"meta.deleted": false,
+			"meta.safeLabel": {
+				$in: safeLabels
+			},
+		})
+		.lean()
+		.exec()
+		.then(function(types) {
+			contentTypes = types.reduce(function(acc, type) {
+				acc[type.meta.safeLabel] = type._id.toString();
+				return acc;
+			}, {});
+		}, function(err) {
+			throw err;
+		});
 }
 
 function verifyType(type) {
-    type = typeof type === "string" ? type : type._id;
+	type = typeof type === "string" ? type : type._id;
 
 	return toList(contentTypes).find(function(t) {
 		return t.id === type.toString();
-    });
+	});
 }
 
 module.exports = function getContentTypes() {
