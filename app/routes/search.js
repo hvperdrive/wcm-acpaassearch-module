@@ -22,5 +22,5 @@ module.exports = function(app) {
 	app.route(baseUrl + "/search").get(searchController.search);
 	app.route(baseUrl + "/suggest").get(searchController.suggest);
 	app.route(baseUrl + "/category/:uuid").get(searchController.category);
-	app.route(baseUrl + "/reindex").get(ProfileSecurity, MethodSecurity.read, PermissionsSecurity, indexController.reindexAll);
+	app.route(baseUrl + "/reindex").put(ProfileSecurity, MethodSecurity.read, PermissionsSecurity, indexController.reindexAll);
 };

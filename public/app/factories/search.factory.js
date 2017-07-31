@@ -14,7 +14,7 @@ angular
 			var factory = {};
 
 			factory.reindexSearch = function() {
-				return $http.get(api + "acpaassearch/reindex");
+				return $http.put(api + "acpaassearch/reindex");
 			};
 
 			return factory;
