@@ -18,7 +18,7 @@
                 "operationType": "search",
                 "icon": "search",
                 "type": "system",
-                "navigationItems": true,
+                "navigationItem": true,
                 "authentication": {
                     "requiresLogin": true
                 }
