@@ -1,9 +1,10 @@
 require("rootpath")();
 
 var Q = require("q");
+var _ = require("lodash");
 
 var readIndex = function readIndex(client, index) {
-	return client.indices.getAlias({
+	return client.indices.get({
 		index: index,
 	});
 };
@@ -45,11 +46,13 @@ var removeIndex = function removeIndex(client, index) {
 
 var createOrUpdate = function createOrUpdate(client, index) {
 	return readIndex(client, index.index)
-		.then(function() {
-			return removeIndex(client, index.index)
-				.then(function() {
-					return createIndex(client, index);
-				});
+		.then(function(storedIndex) {
+			if (!indexesAreEqual(index, storedIndex)) {
+				return removeIndex(client, index.index)
+					.then(function() {
+						return createIndex(client, index);
+					});
+			}
 		}, function(errResponse) {
 			if (errResponse.status === 404) {
 				return createIndex(client, index);
@@ -57,6 +60,13 @@ var createOrUpdate = function createOrUpdate(client, index) {
 
 			throw errResponse;
 		});
+};
+
+var indexesAreEqual = function indexesAreEqual(index, storedIndex) {
+	var equalMappings = _.isEqual(index.mappings, storedIndex.mappings);
+	var equalSettings = !index.settings || _.isEqual(index.settings, storedIndex.settings);
+
+	return !(equalMappings && equalSettings);
 };
 
 module.exports = {

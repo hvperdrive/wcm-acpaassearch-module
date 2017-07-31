@@ -140,7 +140,7 @@ function transformProduct(product) {
 					body: languageHelper.verifyMultilanguage(item.fields.body),
 					title: languageHelper.verifyMultilanguage(item.fields.title),
 					uuid: item.uuid,
-					slug: languageHelper.verifyMultilanguage(item.meta.slug), // @todo: return slug for active language
+					slug: languageHelper.verifyMultilanguage(item.meta.slug),
 					visibleFor: item.fields.visibleFor,
 					version: item.version,
 					api: item.api,

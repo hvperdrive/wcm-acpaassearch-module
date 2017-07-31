@@ -1,5 +1,3 @@
-var Q = require("q");
-
 var Emitter = require("app/middleware/emitter");
 
 var contentTypes = require("../helpers/contentTypes");
@@ -10,7 +8,7 @@ var actions = {
 		fetch: productHelper.fetchProduct,
 		sync: productHelper.syncProduct,
 		remove: productHelper.removeProduct,
-	}
+	},
 };
 
 function verifyAction(action, contentType) {
