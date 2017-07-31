@@ -2,6 +2,7 @@ var Emitter = require("app/middleware/emitter");
 
 var contentTypes = require("../helpers/contentTypes");
 var productHelper = require("../helpers/product");
+var docHelper = require("../helpers/doc");
 
 var actions = {
 	product: {
@@ -36,7 +37,10 @@ function handleUpdate(contentItem, action) {
 
 	if (!syncAction) {
 		if (contentType.type === "main_documentation") {
-			return console.log("INDEX MAIN DOCUMENTATION");
+			return docHelper.fetchDoc(contentItem, elasticsearch)
+				.then(function(doc) {
+					return productHelper.syncProduct(doc, elasticsearch);
+				});
 		}
 
 		return productHelper.fetchProductsForDoc(contentItem, elasticsearch)
