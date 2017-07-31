@@ -2,7 +2,7 @@
 
 var syncAll = require("../helpers/syncAll");
 
-module.exports = function(req, res) {
+module.exports.reindexAll = function(req, res) {
 	syncAll();
 
 	res.status(200).json({
