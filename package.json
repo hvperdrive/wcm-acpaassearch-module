@@ -11,7 +11,19 @@
         "search"
     ],
     "wcmModule": {
-        "frontend": null,
+        "frontend": {
+          "dirPath": "public/app/",
+          "moduleConfig": {
+            "translationKey": "Search",
+            "operationType": "search",
+            "icon": "search",
+            "type": "system",
+            "navigationItems": true,
+            "authentication": {
+              "requiresLogin": true
+            }
+          }
+        },
         "backend": {
             "dirPath": "app/",
             "variables": [
