@@ -6,13 +6,14 @@ var _ = require("lodash");
 
 var ContentModel = require("app/models/content");
 var PopulateHelper = require("app/helpers/populate");
-var languageHelper = require("../helpers/language");
-var contentTypes = require("./contentTypes");
+var languageHelper = require("./language");
+var contentTypesHelper = require("./contentTypes");
 var versionHelper = require("./version");
+var matcher = require("./matcher");
 
 var contentMongoQuery = function() {
 	return {
-		"meta.contentType": contentTypes().product,
+		"meta.contentType": contentTypesHelper().product,
 		"meta.published": true,
 		"meta.deleted": false,
 	};
@@ -69,10 +70,10 @@ function fetchProducts() {
 	});
 }
 
-function fetchProduct(uuid) {
+function fetchProduct(product) {
 	return fetchOne(
 			_.assign(contentMongoQuery(), {
-				uuid: uuid,
+				uuid: typeof product === "string" ? product : product.uuid,
 			}),
 			contentMongoFields
 		)
@@ -126,19 +127,20 @@ function transformProduct(product) {
 			intro: transformField(product.fields.intro),
 			about: transformField(product.fields.about),
 			gettingStarted: transformField(product.fields.gettingStarted),
-			roadmap: product.fields.roadmap.map(function(item) {
+			roadmap: _.get(product, "fields.roadmap", []).map(function(item) {
 				return {
+					uuid: item.uuid,
 					title: languageHelper.verifyMultilanguage(item.fields.title),
 					notes: languageHelper.verifyMultilanguage(item.fields.notes),
 					version: languageHelper.verifyMultilanguage(item.fields.version),
 				};
 			}),
-			customItems: product.customItems.map(function(item) {
+			customItems: _.get(product, "customItems", []).map(function(item) {
 				return {
 					body: languageHelper.verifyMultilanguage(item.fields.body),
 					title: languageHelper.verifyMultilanguage(item.fields.title),
 					uuid: item.uuid,
-					slug: languageHelper.verifyMultilanguage(item.meta.slug), // @todo: return slug for active language
+					slug: languageHelper.verifyMultilanguage(item.meta.slug),
 					visibleFor: item.fields.visibleFor,
 					version: item.version,
 					api: item.api,
@@ -149,7 +151,7 @@ function transformProduct(product) {
 		},
 		meta: {
 			activeLanguages: product.meta.activeLanguages,
-			contentType: typeof product.meta.contentType === "string" ? product.meta.contentType : contentTypes.verifyType(product.meta.contentType).id,
+			contentType: typeof product.meta.contentType === "string" ? product.meta.contentType : contentTypesHelper.verifyType(product.meta.contentType).id,
 			created: product.meta.created,
 			lastModified: product.meta.lastModified,
 			publishDate: product.meta.publishDate,
@@ -162,27 +164,15 @@ function transformProduct(product) {
 }
 
 function productExists(uuid, elasticsearch) {
-	var d = Q.defer();
-
-	elasticsearch.client.exists({
+	return elasticsearch.client.exists({
 		index: elasticsearch.index,
 		type: "product",
 		id: uuid,
-	}).then(function(err, exists) {
-		d.resolve(exists);
-	}, function(err, response) {
-		if (err) {
-			throw err;
-		}
-
-		d.reject(response);
 	});
-
-	return d.promise;
 }
 
 function syncProduct(product, elasticsearch) {
-	return productExists(product.uuid, elasticsearch)
+	return productExists(product.uuid, elasticsearch, "product")
 		.then(function(exists) {
 			return exists ? updateProduct(product, elasticsearch) : createProduct(product, elasticsearch);
 		}, function(err) {
@@ -204,7 +194,9 @@ function updateProduct(product, elasticsearch) {
 		index: elasticsearch.index,
 		type: "product",
 		id: product.uuid,
-		body: transformProduct(product), // @todo: partial update
+		body: {
+			doc: transformProduct(product), // @todo: partial update
+		},
 	});
 }
 
@@ -227,6 +219,22 @@ function syncProducts(products, elasticsearch) {
 	}));
 }
 
+function fetchProductsForDoc(doc, elasticsearch) {
+	var query = matcher.getMatcherForType(contentTypesHelper.verifyType(doc.meta.contentType), doc);
+
+	return elasticsearch.client.search({
+		index: elasticsearch.index,
+		type: "product",
+		body: query
+	}).then(function(doc) {
+		return _.get(doc, "hits.hits", []).map(function(hit) {
+			return _.get(hit, "_source.uuid", "");
+		});
+	}, function(err) {
+		throw err;
+	});
+}
+
 module.exports = {
 	fetchProduct: fetchProduct,
 	fetchProducts: fetchProducts,
@@ -234,4 +242,5 @@ module.exports = {
 	syncProducts: syncProducts,
 	updateProduct: updateProduct,
 	removeProduct: removeProduct,
+	fetchProductsForDoc: fetchProductsForDoc,
 };

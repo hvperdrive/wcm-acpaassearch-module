@@ -102,11 +102,13 @@ function fetchVersions(uuid, product) {
 					}) || {};
 
 					return {
+						uuid: api.uuid,
 						version: version.version,
 						apiSlug: languageHelper.verifyMultilanguage(api.meta.slug),
 						slug: "about",
 						value: languageHelper.verifyMultilanguage(api.fields.about),
 						title: languageHelper.verifyMultilanguage(api.fields.title),
+						visibleFor: api.fields.visibleFor,
 					};
 				});
 
