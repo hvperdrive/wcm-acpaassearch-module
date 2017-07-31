@@ -36,7 +36,6 @@ function fetchOne(query, fields) {
 		.lean()
 		.exec()
 		.then(function(response) {
-			response.fields.productCategory = "main_documentation";
 			return response;
 		}, function(err) {
 			throw err;
@@ -63,6 +62,8 @@ function fetchDoc(doc) {
 				pItem.fields.roadmap = pItem.fields.roadmap.map(function(i) {
 					return i.value;
 				});
+
+				pItem.fields.productCategory = "main_documentation";
 
 				return pItem;
 			});
