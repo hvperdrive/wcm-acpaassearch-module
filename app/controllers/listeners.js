@@ -61,28 +61,34 @@ function handleUpdate(contentItem, action) {
 	syncAction(contentItem, elasticsearch);
 }
 
+function onContentCreated(contentItem) {
+	try {
+		handleUpdate(contentItem, "sync");
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+function onContentUpdated(contentItem) {
+	try {
+		handleUpdate(contentItem, "sync");
+	} catch (err) {
+		console.log(err);
+	}
+}
+
+function onContentRemoved(contentItem) {
+	try {
+		handleUpdate(contentItem, "remove");
+	} catch (err) {
+		console.log(err);
+	}
+}
+
 module.exports.start = function start() {
-	Emitter.on("contentCreated", function(contentItem) {
-		try {
-			handleUpdate(contentItem, "sync");
-		} catch (err) {
-			console.log(err);
-		}
-	});
+	Emitter.on("contentCreated", onContentCreated);
 
-	Emitter.on("contentUpdated", function(contentItem) {
-		try {
-			handleUpdate(contentItem, "sync");
-		} catch (err) {
-			console.log(err);
-		}
-	});
+	Emitter.on("contentUpdated", onContentUpdated);
 
-	Emitter.on("contentRemoved", function(contentItem) {
-		try {
-			handleUpdate(contentItem, "remove");
-		} catch (err) {
-			console.log(err);
-		}
-	});
+	Emitter.on("contentRemoved", onContentRemoved);
 };
