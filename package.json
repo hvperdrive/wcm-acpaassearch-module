@@ -1,5 +1,5 @@
 {
-    "name": "wcm-acpaassearch-module",
+    "name": "acpaassearch",
     "version": "0.0.21",
     "description": "Search module for AcPaaS Portal",
     "main": "app/routes/index.js",
