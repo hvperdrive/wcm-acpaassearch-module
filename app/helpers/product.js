@@ -119,47 +119,52 @@ function transformField(field) {
 }
 
 function transformProduct(product) {
+	var meta = {
+		activeLanguages: product.meta.activeLanguages,
+		contentType: typeof product.meta.contentType === "string" ? product.meta.contentType : contentTypesHelper.verifyType(product.meta.contentType).id,
+		created: product.meta.created,
+		lastModified: product.meta.lastModified,
+		publishDate: product.meta.publishDate,
+		slug: languageHelper.verifyMultilanguage(product.meta.slug), // @todo: return slug for active language
+		taxonomy: {
+			tags: product.meta.taxonomy.tags,
+		},
+	};
+	var roadmap = _.get(product, "fields.roadmap", []).map(function(item) {
+		return {
+			uuid: item.uuid,
+			title: languageHelper.verifyMultilanguage(item.fields.title),
+			notes: languageHelper.verifyMultilanguage(item.fields.notes),
+			version: languageHelper.verifyMultilanguage(item.fields.version),
+		};
+	});
+	var customItems = _.get(product, "customItems", []).map(function(item) {
+		return {
+			body: languageHelper.verifyMultilanguage(item.fields.body),
+			title: languageHelper.verifyMultilanguage(item.fields.title),
+			uuid: item.uuid,
+			slug: languageHelper.verifyMultilanguage(item.meta.slug),
+			visibleFor: item.fields.visibleFor,
+			version: item.version,
+			api: item.api,
+		};
+	});
+	var fields = {
+		productCategory: product.fields.productCategory,
+		title: transformField(product.fields.title),
+		intro: transformField(product.fields.intro),
+		about: transformField(product.fields.about),
+		gettingStarted: transformField(product.fields.gettingStarted),
+		roadmap: roadmap,
+		customItems: customItems,
+		versionItems: product.versionItems,
+		apiS: product.apiS,
+	};
+
 	return {
 		uuid: product.uuid,
-		fields: {
-			productCategory: product.fields.productCategory,
-			title: transformField(product.fields.title),
-			intro: transformField(product.fields.intro),
-			about: transformField(product.fields.about),
-			gettingStarted: transformField(product.fields.gettingStarted),
-			roadmap: _.get(product, "fields.roadmap", []).map(function(item) {
-				return {
-					uuid: item.uuid,
-					title: languageHelper.verifyMultilanguage(item.fields.title),
-					notes: languageHelper.verifyMultilanguage(item.fields.notes),
-					version: languageHelper.verifyMultilanguage(item.fields.version),
-				};
-			}),
-			customItems: _.get(product, "customItems", []).map(function(item) {
-				return {
-					body: languageHelper.verifyMultilanguage(item.fields.body),
-					title: languageHelper.verifyMultilanguage(item.fields.title),
-					uuid: item.uuid,
-					slug: languageHelper.verifyMultilanguage(item.meta.slug),
-					visibleFor: item.fields.visibleFor,
-					version: item.version,
-					api: item.api,
-				};
-			}),
-			versionItems: product.versionItems,
-			apiS: product.apiS,
-		},
-		meta: {
-			activeLanguages: product.meta.activeLanguages,
-			contentType: typeof product.meta.contentType === "string" ? product.meta.contentType : contentTypesHelper.verifyType(product.meta.contentType).id,
-			created: product.meta.created,
-			lastModified: product.meta.lastModified,
-			publishDate: product.meta.publishDate,
-			slug: languageHelper.verifyMultilanguage(product.meta.slug), // @todo: return slug for active language
-			taxonomy: {
-				tags: product.meta.taxonomy.tags,
-			},
-		},
+		fields: fields,
+		meta: meta
 	};
 }
 
