@@ -40,6 +40,28 @@ function getRoadmapItemsQuery(query, type) {
 	}];
 }
 
+function getVisibleForFilter(fieldType, type) {
+	var allowedCustomItems = ["allProfiles"];
+
+	if (type === "mprofiel") {
+		return {};
+	} else if (type === "aprofiel") {
+		allowedCustomItems = ["allProfiles", "aProfiles"];
+	}
+
+	return {
+		"bool": {
+			"must": _.map(disallowedFields, function (field) {
+				return {
+					"term": {
+						["fields." + fieldType + ".visibleFor"]: field
+					}
+				}
+			})
+		}
+	};
+};
+
 function getCustomItemsQuery(query, type) {
 	return [{
 		"nested": {
@@ -51,12 +73,33 @@ function getCustomItemsQuery(query, type) {
 					"type": "phrase_prefix",
 					"slop": 50,
 				},
+				"filter": getVisibleForFilter("customItems", type)
 			},
 			"inner_hits": {
 				"name": "customItems"
 			}
 		}
 	}];
+}
+
+function getVersionsLoginTypeFilter(type) {
+	var disallowedFields = ["gettingStarted", "status", "support", "architecture", "faq"];
+
+	if (type === "mprofiel") {
+		return {};
+	} else if (type === "aprofiel") {
+		disallowedFields = ["architecture"];
+	}
+
+	return {
+		"bool": {
+			"filter": {
+				"terms": {
+					"fields.versionItems.slug": disallowedFields
+				}
+			}
+		}
+	};
 }
 
 function getVersionItemsQuery(query, type) {
@@ -70,6 +113,7 @@ function getVersionItemsQuery(query, type) {
 					"type": "phrase_prefix",
 					"slop": 50,
 				},
+				"filter": getVersionsLoginTypeFilter(type)
 			},
 			"inner_hits": {
 				"name": "versionItems"
@@ -77,6 +121,8 @@ function getVersionItemsQuery(query, type) {
 		}
 	}];
 }
+
+
 
 function getApiItemsQuery(query, type) {
 	return [{
@@ -89,6 +135,7 @@ function getApiItemsQuery(query, type) {
 					"type": "phrase_prefix",
 					"slop": 50,
 				},
+				"must_not": getVisibleForFilter("apiS", type)
 			},
 			"inner_hits": {
 				"name": "apiS"

@@ -42,7 +42,7 @@ var typeMatchers = [{
 				"path": "fields.customItems",
 				"query": {
 					"match": {
-						"field.customItems.uuid": value,
+						"fields.customItems.uuid": value,
 					},
 				},
 			},
@@ -77,6 +77,6 @@ module.exports.getMatcherForType = function(contentType, doc) {
 
 	return {
 		"_source": "uuid",
-		query: typeMatcher.match(languageHelper.verifyMultilanguage(_.get(doc, typeMatcher.value)))
+		query: typeMatcher.match(languageHelper.verifyMultilanguage(_.get(doc, typeMatcher.value))),
 	};
 };

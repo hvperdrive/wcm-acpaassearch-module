@@ -73,7 +73,15 @@ module.exports = {
 						"slug": {
 							"index": "no",
 							"type": "string",
-						},
+                        },
+                        "api": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        },
+                        "version": {
+                            "index": "not_analyzed",
+                            "type": "string"
+                        },
 						"visibleFor": {
 							"index": "not_analyzed",
 							"type": "string",
@@ -101,7 +109,7 @@ module.exports = {
 						"version": {
 							"type": "string",
 						},
-						"apiSlug": {
+						"api": {
 							"index": "no",
 							"type": "string",
 						},

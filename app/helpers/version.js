@@ -57,78 +57,78 @@ function fetchVersions(uuid, product) {
 	return populateHelper.fields.types.defaults["view-reference"]({
 		uuid: uuid,
 	}, null, settings, settings.populateFields)
-	.then(function(viewResult) {
-		var result = {
-			versionItems: [],
-			apiS: [],
-			customItems: [],
-		};
+		.then(function(viewResult) {
+			var result = {
+				versionItems: [],
+				apiS: [],
+				customItems: [],
+			};
 
-		if (viewResult.total === 0) {
-			return result;
-		}
+			if (viewResult.total === 0) {
+				return result;
+			}
 
-		result.versionItems = _.flatten(viewResult.data.map(function(version) {
-			return ["gettingStarted", "releaseNotes", "features", "architecture", "faq"].map(function(field) {
-				return {
-					version: languageHelper.verifyMultilanguage(version.fields.versionLabel),
-					slug: field,
-					value: languageHelper.verifyMultilanguage(version.fields[field]),
-				};
-			});
-		}));
-
-		var versionApiS = _.flattenDeep(viewResult.data.map(function(version) {
-			return version.fields.apiS.map(function(api) {
-				return {
-					version: languageHelper.verifyMultilanguage(version.fields.versionLabel),
-					api: api.value,
-				};
-			});
-		}));
-		var uuids = versionApiS.map(function(version) {
-			return version.api;
-		});
-
-		if (!uuids.length) {
-			return result;
-		}
-
-		return apiHelper.fetchApiS(uuids)
-			.then(function(response) {
-				result.apiS = response.apiS.map(function(api) {
-					var version = versionApiS.find(function(a) {
-						return a.api === api.uuid;
-					}) || {};
-
+			result.versionItems = _.flatten(viewResult.data.map(function(version) {
+				return ["gettingStarted", "releaseNotes", "features", "architecture", "faq"].map(function(field) {
 					return {
-						uuid: api.uuid,
-						version: version.version,
-						apiSlug: languageHelper.verifyMultilanguage(api.meta.slug),
-						slug: "about",
-						value: languageHelper.verifyMultilanguage(api.fields.about),
-						title: languageHelper.verifyMultilanguage(api.fields.title),
-						visibleFor: api.fields.visibleFor,
+						version: languageHelper.verifyMultilanguage(version.fields.versionLabel),
+						slug: field,
+						value: languageHelper.verifyMultilanguage(version.fields[field]),
 					};
 				});
+			}));
 
-				result.customItems = response.customItems.map(function(item) {
-					var version = versionApiS.find(function(v) {
-						return v.api === item.apiUuid;
-					}) || {};
-
-					item.version = version.version;
-
-					return item;
+			var versionApiS = _.flattenDeep(viewResult.data.map(function(version) {
+				return version.fields.apiS.map(function(api) {
+					return {
+						version: languageHelper.verifyMultilanguage(version.fields.versionLabel),
+						api: api.value,
+					};
 				});
-
-				return result;
-			}, function(err) {
-				throw err;
+			}));
+			var uuids = versionApiS.map(function(version) {
+				return version.api;
 			});
-	}, function(err) {
-		throw err;
-	});
+
+			if (!uuids.length) {
+				return result;
+			}
+
+			return apiHelper.fetchApiS(uuids)
+				.then(function(response) {
+					result.apiS = response.apiS.map(function(api) {
+						var version = versionApiS.find(function(a) {
+							return a.api === api.uuid;
+						}) || {};
+
+						return {
+							uuid: api.uuid,
+							version: version.version,
+							api: languageHelper.verifyMultilanguage(api.meta.slug),
+							slug: "about",
+							value: languageHelper.verifyMultilanguage(api.fields.about),
+							title: languageHelper.verifyMultilanguage(api.fields.title),
+							visibleFor: api.fields.visibleFor,
+						};
+					});
+
+					result.customItems = response.customItems.map(function(item) {
+						var version = versionApiS.find(function(v) {
+							return v.api === item.apiUuid;
+						}) || {};
+
+						item.version = version.version;
+
+						return item;
+					});
+
+					return result;
+				}, function(err) {
+					throw err;
+				});
+		}, function(err) {
+			throw err;
+		});
 }
 
 function transformVersion(version) {
