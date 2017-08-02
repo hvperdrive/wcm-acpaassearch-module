@@ -14,24 +14,20 @@ var beforeRemove = function beforeRemove() {
 	console.log("before remove");
 };
 
-var onDisabled = function onDisabled() {
-	console.log("on disabled");
-};
-
 var beforeDisable = function beforeDisable() {
 	console.log("before disable");
 };
 
-var onRemoved = function() {
-	console.log("on removed");
+var onLoadComplete = function onLoadComplete() {
+	console.log("onLoadComplete");
+	onConfigurationChanged();
 };
 
 module.exports = function handleHooks(hooks) {
 	var myHooks = {
 		onConfigurationChanged: onConfigurationChanged,
 		beforeRemove: beforeRemove,
-		onRemoved: onRemoved,
-		onDisabled: onDisabled,
+		onLoadComplete: onLoadComplete,
 		beforeDisable: beforeDisable,
 	};
 

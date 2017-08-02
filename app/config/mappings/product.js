@@ -95,7 +95,7 @@ module.exports = {
 							"type": "string",
 						},
 						"slug": {
-							"index": "no",
+							"index": "not_analyzed",
 							"type": "string",
 						},
 						"value": {
