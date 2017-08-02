@@ -51,10 +51,10 @@ function getVisibleForFilter(fieldType, type) {
 
 	return {
 		"bool": {
-			"must": _.map(disallowedFields, function (field) {
+			"must": _.map(allowedCustomItems, function (type) {
 				return {
 					"term": {
-						["fields." + fieldType + ".visibleFor"]: field
+						["fields." + fieldType + ".visibleFor"]: type
 					}
 				}
 			})
@@ -67,13 +67,17 @@ function getCustomItemsQuery(query, type) {
 		"nested": {
 			"path": "fields.customItems",
 			"query": {
-				"multi_match": {
-					"query": query,
-					"fields": ["fields.customItems.*"],
-					"type": "phrase_prefix",
-					"slop": 50,
-				},
-				"filter": getVisibleForFilter("customItems", type)
+                "bool": {
+                    "must": {
+                        "multi_match": {
+                            "query": query,
+                            "fields": ["fields.customItems.*"],
+                            "type": "phrase_prefix",
+                            "slop": 50,
+                        },
+                    },
+				    "filter": getVisibleForFilter("customItems", type)
+                }
 			},
 			"inner_hits": {
 				"name": "customItems"
@@ -93,11 +97,17 @@ function getVersionsLoginTypeFilter(type) {
 
 	return {
 		"bool": {
-			"filter": {
-				"terms": {
-					"fields.versionItems.slug": disallowedFields
-				}
-			}
+			"must_not": {
+                "bool": {
+                    "filter": _.map(disallowedFields, function (field) {
+                        return {
+                            "term": {
+                                "fields.versionItems.slug": field
+                            }
+                        }
+                    })
+                }
+            }
 		}
 	};
 }
@@ -107,13 +117,17 @@ function getVersionItemsQuery(query, type) {
 		"nested": {
 			"path": "fields.versionItems",
 			"query": {
-				"multi_match": {
-					"query": query,
-					"fields": ["fields.versionItems.*"],
-					"type": "phrase_prefix",
-					"slop": 50,
-				},
-				"filter": getVersionsLoginTypeFilter(type)
+				"bool": {
+                    "must": {
+                        "multi_match": {
+                            "query": query,
+                            "fields": ["fields.versionItems.*"],
+                            "type": "phrase_prefix",
+                            "slop": 50,
+                        },
+                    },
+                    "filter": getVersionsLoginTypeFilter(type)
+                }
 			},
 			"inner_hits": {
 				"name": "versionItems"
@@ -129,13 +143,17 @@ function getApiItemsQuery(query, type) {
 		"nested": {
 			"path": "fields.apiS",
 			"query": {
-				"multi_match": {
-					"query": query,
-					"fields": ["fields.apiS.*"],
-					"type": "phrase_prefix",
-					"slop": 50,
-				},
-				"must_not": getVisibleForFilter("apiS", type)
+				"bool": {
+                    "must": {
+                        "multi_match": {
+                            "query": query,
+                            "fields": ["fields.apiS.*"],
+                            "type": "phrase_prefix",
+                            "slop": 50,
+                        },
+                    },
+                    "filter": getVisibleForFilter("apiS", type)
+                }
 			},
 			"inner_hits": {
 				"name": "apiS"
