@@ -1,6 +1,6 @@
 {
     "name": "acpaassearch",
-    "version": "0.0.27",
+    "version": "0.0.31",
     "description": "Search module for AcPaaS Portal",
     "main": "app/routes/index.js",
     "scripts": {

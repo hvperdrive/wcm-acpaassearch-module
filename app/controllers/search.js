@@ -1,9 +1,10 @@
+var _ = require("lodash");
 var elasticClient = require("../helpers/elastic");
 var SearchHelper = require("../helpers/search");
 var variablesHelper = require("../helpers/variables");
 
 var execSearch = function execSearch(body, type) {
-	var variables = variablesHelper();
+    var variables = variablesHelper();
 
 	return elasticClient.client.search({
 		index: variables.acpaassearch.variables.index,
@@ -15,6 +16,7 @@ var execSearch = function execSearch(body, type) {
 var getQuery = function getQuery(req) {
 	return req.query.q || req.query.query;
 };
+
 var getLimit = function getLimit(req) {
     // Total request cannot be bigger then 10000 (Elastic weardness).
 	var limit = req.query.limit ? parseInt(req.query.limit) : 10000;
@@ -34,19 +36,24 @@ var getLimit = function getLimit(req) {
 
 	return limit;
 };
+
 var getSkip = function getSkip(req) {
 	return req.query.skip || 0;
 };
 
+var getUserType = function getUserType(req) {
+    return _.get(req, "member.meta.type", null);
+};
+
 module.exports.search = function search(req, res) {
-	var q = getQuery(req);
+    var q = getQuery(req);
 
 	if (!q) {
 		return res.status(400).json({
 			err: "No query parameter 'q' found in the request.",
 		});
 	}
-	execSearch(SearchHelper.getQuery(q, getLimit(req), null), ["product"])
+	execSearch(SearchHelper.getQuery(q, getLimit(req), getUserType(req)), ["product"])
 		.then(
 			function onSuccess(result) {
 				res.status(200).json(SearchHelper.resultMapper(result));
@@ -68,7 +75,7 @@ module.exports.suggest = function suggest(req, res) {
 		});
 	}
 
-	execSearch(SearchHelper.getSuggestQuery(q, getLimit(req), null), ["product"])
+	execSearch(SearchHelper.getSuggestQuery(q, getLimit(req), getUserType(req)), ["product"])
 		.then(
 			function onSuccess(result) {
 				res.status(200).json(SearchHelper.suggestMapper(result));
@@ -97,7 +104,7 @@ module.exports.category = function category(req, res) {
 		});
 	}
 
-	execSearch(SearchHelper.getCategoryQuery(q, cat, getSkip(req), getLimit(req), null), ["product"])
+	execSearch(SearchHelper.getCategoryQuery(q, cat, getSkip(req), getLimit(req), getUserType(req)), ["product"])
 		.then(
 			function onSuccess(result) {
 				res.status(200).json(SearchHelper.suggestMapper(result));
