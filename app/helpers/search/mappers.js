@@ -1,24 +1,46 @@
 var _ = require("lodash");
 
+var getAPISlug = function getAPISlug(productSlug, topHitSource) {
+	return "/" + productSlug + "/" +
+		topHitSource.version + "/" +
+		topHitSource.api + "/" +
+		topHitSource.slug;
+};
+
+var getVersionItemSlug = function getVersionItemSlug(productSlug, topHitSource) {
+	return "/" + productSlug + "/" +
+		topHitSource.version + "/" +
+		topHitSource.slug;
+};
+
+var getCustomItemSlug = function getCustomItemSlug(productSlug, topHitSource) {
+	return "/" + productSlug + "/" +
+		topHitSource.slug;
+};
+
+var getDefaultItemSlug = function getDefaultItemSlug(productSlug, topHit) {
+	var emptyKeys = ["title", "intro"];
+
+	return "/" + productSlug +
+		(emptyKeys.indexOf(topHit._key) >= 0 ? "" : ("/" + topHit._key));
+};
+
 var generateTopHitSlug = function generateTopHitSlug(topHit, productSlug) {
 	var topHitSource = _.get(topHit, "_source", {});
 
 	switch (topHit._key) {
 		case "apiS":
-			return "/" + productSlug + "/" +
-				topHitSource.version + "/" +
-				topHitSource.apiSlug + "/" +
-				topHitSource.slug;
+			return getAPISlug(productSlug, topHitSource);
 		case "versionItems":
-			return "/" + productSlug + "/" +
-				topHitSource.version + "/" +
-				topHitSource.slug;
+			return getVersionItemSlug(productSlug, topHitSource);
 		case "customItems":
-			return "/" + productSlug + "/" +
-				topHitSource.slug;
+			if (topHitSource.api) {
+				return getAPISlug(productSlug, topHitSource);
+			}
+
+			return getCustomItemSlug(productSlug, topHitSource);
 		default:
-			return "/" + productSlug + "/" +
-				topHit._key;
+			return getDefaultItemSlug(productSlug, topHit);
 	}
 };
 

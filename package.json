@@ -1,6 +1,6 @@
 {
-    "name": "wcm-acpaassearch-module",
-    "version": "0.0.19",
+    "name": "acpaassearch",
+    "version": "0.0.25",
     "description": "Search module for AcPaaS Portal",
     "main": "app/routes/index.js",
     "scripts": {
@@ -11,7 +11,19 @@
         "search"
     ],
     "wcmModule": {
-        "frontend": null,
+        "frontend": {
+            "dirPath": "public/app/",
+            "moduleConfig": {
+                "translationKey": "Search",
+                "operationType": "search",
+                "icon": "search",
+                "type": "system",
+                "navigationItem": true,
+                "authentication": {
+                    "requiresLogin": true
+                }
+            }
+        },
         "backend": {
             "dirPath": "app/",
             "variables": [
@@ -42,6 +54,13 @@
                             "key": "index",
                             "value": "a-search",
                             "type": "text",
+                            "required": true
+                        },
+                        {
+                            "label": "Elastic indexable content types",
+                            "description": "The content types to index (comma separated safeLabels)",
+                            "key": "contentTypes",
+                            "value": "product,product_doc_version,api,basic_page,timeline_item",
                             "required": true
                         }
                     ]

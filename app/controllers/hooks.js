@@ -1,4 +1,5 @@
 var variablesHelper = require("../helpers/variables");
+var contentTypesHelper = require("../helpers/contentTypes");
 var elastic = require("../helpers/elastic");
 
 var onConfigurationChanged = function onConfigurationChanged() {
@@ -6,7 +7,7 @@ var onConfigurationChanged = function onConfigurationChanged() {
 	// Reload config
 	variablesHelper.reload();
 	elastic.reload();
-
+	contentTypesHelper.reload();
 };
 
 var beforeRemove = function beforeRemove() {
