@@ -35,6 +35,10 @@ function errHandler(err) {
 	throw err;
 }
 
+function verifyUuid(product) {
+	return typeof product === "string" ? product : product.uuid;
+}
+
 function fetchOne(query, fields) {
 	return ContentModel
 		.findOne(query, fields)
@@ -51,10 +55,15 @@ function fetchContent(query, fields) {
 		.exec();
 }
 
-function fetchProducts() {
+function fetchProducts(uuids) {
 	var populatedProducts = [];
+	var query = contentMongoQuery();
 
-	return fetchContent(contentMongoQuery(), contentMongoFields)
+	if (uuids) {
+		query.uuid = { $in: uuids };
+	}
+
+	return fetchContent(query, contentMongoFields)
 		.then(function(products) {
 			return runQueue(products.map(function(product) {
 				return function() {
@@ -73,7 +82,7 @@ function fetchProducts() {
 function fetchProduct(product) {
 	return fetchOne(
 		_.assign(contentMongoQuery(), {
-			uuid: typeof product === "string" ? product : product.uuid,
+			uuid: verifyUuid(product),
 		}),
 		contentMongoFields
 	)
@@ -180,7 +189,7 @@ function productExists(uuid, elasticsearch) {
 }
 
 function syncProduct(product, elasticsearch) {
-	return productExists(product.uuid, elasticsearch, "product")
+	return productExists(verifyUuid(product), elasticsearch, "product")
 		.then(function(exists) {
 			return exists ? updateProduct(product, elasticsearch) : createProduct(product, elasticsearch);
 		}, errHandler);
@@ -230,9 +239,11 @@ function fetchProductsForDoc(doc, elasticsearch) {
 		type: "product",
 		body: query,
 	}).then(function(result) {
-		return _.get(result, "hits.hits", []).map(function(hit) {
+		var products = _.get(result, "hits.hits", []).map(function(hit) {
 			return _.get(hit, "_source.uuid", "");
 		});
+
+		return fetchProducts(products);
 	}, function(err) {
 		throw err;
 	});
