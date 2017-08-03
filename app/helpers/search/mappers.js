@@ -63,11 +63,12 @@ var getProductTopInnerHit = function getProductTopInnerHit(product) {
 var mapProducts = function mapProducts(products) {
 	return _.map(products, function(product) {
 		var topHit = getProductTopInnerHit(product);
-		var productSlug = (
-			_.get(product, "_source.fields.productCategory") === "main_documentation" ?
-				"" :
-				("/" + _.get(product, "_source.meta.slug", ""))
-		);
+		var productSlug = "";
+
+		if (["main_documentation", "news"].indexOf(_.get(product, "_source.fields.productCategory"))) {
+			var productSlug = "/" + _.get(product, "_source.meta.slug", "");
+		}
+
 		var slug = generateTopHitSlug(topHit, productSlug);
 
 		return {
