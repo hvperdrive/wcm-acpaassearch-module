@@ -1,27 +1,27 @@
 var _ = require("lodash");
 
 var getAPISlug = function getAPISlug(productSlug, topHitSource) {
-	return "/" + productSlug + "/" +
+	return productSlug + "/" +
 		topHitSource.version + "/" +
 		topHitSource.api + "/" +
 		topHitSource.slug;
 };
 
 var getVersionItemSlug = function getVersionItemSlug(productSlug, topHitSource) {
-	return "/" + productSlug + "/" +
+	return productSlug + "/" +
 		topHitSource.version + "/" +
 		topHitSource.slug;
 };
 
 var getCustomItemSlug = function getCustomItemSlug(productSlug, topHitSource) {
-	return "/" + productSlug + "/" +
+	return productSlug + "/" +
 		topHitSource.slug;
 };
 
 var getDefaultItemSlug = function getDefaultItemSlug(productSlug, topHit) {
 	var emptyKeys = ["title", "intro"];
 
-	return "/" + productSlug +
+	return productSlug +
 		(emptyKeys.indexOf(topHit._key) >= 0 ? "" : ("/" + topHit._key));
 };
 
@@ -63,11 +63,18 @@ var getProductTopInnerHit = function getProductTopInnerHit(product) {
 var mapProducts = function mapProducts(products) {
 	return _.map(products, function(product) {
 		var topHit = getProductTopInnerHit(product);
-		var slug = generateTopHitSlug(topHit, _.get(product, "_source.meta.slug", null));
+		var productSlug = "";
+
+		if (["main_documentation", "news"].indexOf(_.get(product, "_source.fields.productCategory"))) {
+			var productSlug = "/" + _.get(product, "_source.meta.slug", "");
+		}
+
+		var slug = generateTopHitSlug(topHit, productSlug);
 
 		return {
 			_type: product._type,
 			_score: product._score,
+			category: _.get(product, "_source.fields.productCategory"),
 			slug: slug,
 			title: _.get(product, "_source.fields.title.value"),
 			description: _.get(product, "_source.fields.intro.value"),
