@@ -12,6 +12,7 @@ var safeLabels = [
 	"basic_page",
 	"timeline_item",
 	"main_documentation",
+	"news_item",
 ];
 var contentTypes = {};
 
