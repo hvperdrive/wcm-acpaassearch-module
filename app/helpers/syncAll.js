@@ -5,6 +5,8 @@ var _ = require("lodash");
 
 var productHelper = require("./product");
 var docHelper = require("./doc");
+var indexableTypes = require("./contentTypes").indexableTypes;
+var runQueue = require("./queue").runQueue;
 
 function errHandler(err) {
 	throw err;
@@ -16,13 +18,19 @@ module.exports = function() {
 	return productHelper
 		.fetchProducts()
 		.then(function(products) {
-			return docHelper.fetchDocs("news_item")
-				.then(function(news) {
-					return docHelper.fetchDocs("main_documentation")
+			var items = products;
+
+			return runQueue(indexableTypes.map(function(type) {
+				return function() {
+					return docHelper.fetchDocs(type)
 						.then(function(docs) {
-							return _.concat(products, news, docs);
+							items = items.concat(docs);
 						}, errHandler);
-				}, errHandler);
+				};
+			}))
+			.then(function() {
+				return items;
+			}, errHandler);
 		})
 		.then(function(products) {
 			return productHelper.syncProducts(products, elasticsearch);
