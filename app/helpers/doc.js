@@ -29,6 +29,10 @@ var contentMongoFields = {
 	"meta.taxonomy": 1,
 };
 
+function errHandler(err) {
+	throw err;
+}
+
 function fetchOne(query, fields) {
 	return ContentModel
 		.findOne(query, fields)
@@ -72,7 +76,7 @@ function parseDoc(type, doc) {
 		pItem.fields.productCategory = type;
 
 		return pItem;
-	});
+	}, errHandler);
 }
 
 function fetchDocs(contentType) {
@@ -88,16 +92,13 @@ function fetchDocs(contentType) {
 				return parseDoc(contentType, doc)
 					.then(function(pDoc) {
 						parsed.push(pDoc);
-					});
+					}, errHandler);
 			};
 		}));
-	}, function(err) {
-		throw err;
-	})
+	}, errHandler)
 	.then(function() {
-		console.log(JSON.stringify(parsed, null, 2));
 		return parsed;
-	});
+	}, errHandler);
 }
 
 module.exports = {
