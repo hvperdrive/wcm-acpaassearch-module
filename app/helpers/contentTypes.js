@@ -61,3 +61,8 @@ module.exports = function getContentTypes() {
 
 module.exports.reload = reload;
 module.exports.verifyType = verifyType;
+module.exports.indexableTypes = [
+	"product",
+	"main_documentation",
+	"news_item",
+];
