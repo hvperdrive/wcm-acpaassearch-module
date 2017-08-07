@@ -1,8 +1,8 @@
 "use strict";
 
 require("rootpath")();
-var Q = require("q");
 var _ = require("lodash");
+var runQueue = require("./queue").runQueue;
 
 var ContentModel = require("app/models/content");
 var PopulateHelper = require("app/helpers/populate");
@@ -31,17 +31,20 @@ var contentMongoFields = {
 	"meta.taxonomy": 1,
 };
 
+function errHandler(err) {
+	throw err;
+}
+
+function verifyUuid(product) {
+	return typeof product === "string" ? product : product.uuid;
+}
+
 function fetchOne(query, fields) {
 	return ContentModel
 		.findOne(query, fields)
 		.populate("meta.contentType")
 		.lean()
-		.exec()
-		.then(function(response) {
-			return response;
-		}, function(err) {
-			throw err;
-		});
+		.exec();
 }
 
 function fetchContent(query, fields) {
@@ -49,67 +52,75 @@ function fetchContent(query, fields) {
 		.find(query, fields)
 		.populate("meta.contentType")
 		.lean()
-		.exec()
-		.then(function(response) {
-			return response;
-		}, function(err) {
-			throw err;
-		});
+		.exec();
 }
 
-function fetchProducts() {
-	return fetchContent(contentMongoQuery(), {
-		uuid: 1,
-	})
-	.then(function(products) {
-		return products.map(function(product) {
-			return product.uuid;
-		});
-	}, function(err) {
-		throw err;
-	});
+function fetchProducts(uuids) {
+	var populatedProducts = [];
+	var query = contentMongoQuery();
+
+	if (uuids) {
+		query.uuid = { $in: uuids };
+	}
+
+	return fetchContent(query, contentMongoFields)
+		.then(function(products) {
+			return runQueue(products.map(function(product) {
+				return function() {
+					return populateProduct(product)
+						.then(function(populated) {
+							populatedProducts.push(populated);
+						});
+				};
+			}));
+		}, errHandler)
+		.then(function() {
+			return populatedProducts;
+		}, errHandler);
 }
 
 function fetchProduct(product) {
 	return fetchOne(
-			_.assign(contentMongoQuery(), {
-				uuid: typeof product === "string" ? product : product.uuid,
-			}),
-			contentMongoFields
-		)
-		.then(function(item) {
-			return PopulateHelper.fields.one(item, {
-				populate: "customItems,roadmap",
-				lang: languageHelper.currentLanguage(), // @todo: get language from request
-			}).then(function(pItem) {
-				pItem.customItems = pItem.fields.customItems.map(function(i) {
-					return i.value;
-				});
-				delete pItem.fields.customItems;
+		_.assign(contentMongoQuery(), {
+			uuid: verifyUuid(product),
+		}),
+		contentMongoFields
+	)
+	.then(populateProduct);
+}
 
-				pItem.fields.roadmap = pItem.fields.roadmap.map(function(i) {
-					return i.value;
-				});
-
-				return pItem;
-			});
-		}, function(err) {
-			throw err;
-		})
-		.then(function(item) {
-			return versionHelper.fetchVersions(item.fields.versionsOverview.uuid, item.uuid)
-				.then(function(response) {
-					item.versionItems = response.versionItems;
-					item.apiS = response.apiS;
-					item.customItems = item.customItems.concat(response.customItems).filter(function(i) {
-						return !!_.get(i, "fields.body");
-					});
-
-					return item;
-				}, function(err) {
-					throw err;
-				});
+function populateProduct(product) {
+	return PopulateHelper.fields.one(product, {
+		populate: "customItems,roadmap",
+		lang: languageHelper.currentLanguage(), // @todo: get language from request
+	}).then(function(pItem) {
+		pItem.customItems = pItem.fields.customItems.map(function(i) {
+			return i.value;
 		});
+		delete pItem.fields.customItems;
+
+		pItem.fields.roadmap = pItem.fields.roadmap.map(function(i) {
+			return i.value;
+		});
+
+		return pItem;
+	}, errHandler)
+	.then(function(item) {
+		if (!_.get(item, "fields.versionsOverview.uuid")) {
+			return item;
+		}
+
+		return versionHelper.fetchVersions(item.fields.versionsOverview.uuid, item.uuid)
+			.then(function(response) {
+				item.versionItems = response.versionItems;
+				item.apiS = response.apiS;
+				item.customItems = item.customItems.concat(response.customItems).filter(function(i) {
+					return !!_.get(i, "fields.body");
+				});
+
+				return item;
+			}, errHandler);
+	}, errHandler);
 }
 
 function transformField(field) {
@@ -155,6 +166,7 @@ function transformProduct(product) {
 		intro: transformField(product.fields.intro),
 		about: transformField(product.fields.about),
 		gettingStarted: transformField(product.fields.gettingStarted),
+		body: transformField(product.fields.body),
 		roadmap: roadmap,
 		customItems: customItems,
 		versionItems: product.versionItems,
@@ -164,7 +176,7 @@ function transformProduct(product) {
 	return {
 		uuid: product.uuid,
 		fields: fields,
-		meta: meta
+		meta: meta,
 	};
 }
 
@@ -177,12 +189,10 @@ function productExists(uuid, elasticsearch) {
 }
 
 function syncProduct(product, elasticsearch) {
-	return productExists(product.uuid, elasticsearch, "product")
+	return productExists(verifyUuid(product), elasticsearch, "product")
 		.then(function(exists) {
 			return exists ? updateProduct(product, elasticsearch) : createProduct(product, elasticsearch);
-		}, function(err) {
-			throw err;
-		});
+		}, errHandler);
 }
 
 function createProduct(product, elasticsearch) {
@@ -214,13 +224,10 @@ function removeProduct(product, elasticsearch) {
 }
 
 function syncProducts(products, elasticsearch) {
-	return Q.all(products.map(function(product) {
-		return fetchProduct(product)
-			.then(function(populatedProduct) {
-				return syncProduct(populatedProduct, elasticsearch);
-			}, function(err) {
-				throw err;
-			});
+	return runQueue(products.map(function(product) {
+		return function() {
+			return syncProduct(product, elasticsearch);
+		};
 	}));
 }
 
@@ -230,11 +237,13 @@ function fetchProductsForDoc(doc, elasticsearch) {
 	return elasticsearch.client.search({
 		index: elasticsearch.index,
 		type: "product",
-		body: query
-	}).then(function(doc) {
-		return _.get(doc, "hits.hits", []).map(function(hit) {
+		body: query,
+	}).then(function(result) {
+		var products = _.get(result, "hits.hits", []).map(function(hit) {
 			return _.get(hit, "_source.uuid", "");
 		});
+
+		return fetchProducts(products);
 	}, function(err) {
 		throw err;
 	});

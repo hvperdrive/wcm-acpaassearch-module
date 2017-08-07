@@ -1,7 +1,7 @@
 "use strict";
 
 require("rootpath")();
-var Q = require("q");
+var runQueue = require("./queue").runQueue;
 var _ = require("lodash");
 
 var ContentModel = require("app/models/content");
@@ -9,9 +9,9 @@ var PopulateHelper = require("app/helpers/populate");
 var languageHelper = require("./language");
 var contentTypesHelper = require("./contentTypes");
 
-var contentMongoQuery = function() {
+var contentMongoQuery = function(type) {
 	return {
-		"meta.contentType": contentTypesHelper().main_documentation,
+		"meta.contentType": contentTypesHelper()[type],
 		"meta.published": true,
 		"meta.deleted": false,
 	};
@@ -29,49 +29,79 @@ var contentMongoFields = {
 	"meta.taxonomy": 1,
 };
 
+function errHandler(err) {
+	throw err;
+}
+
 function fetchOne(query, fields) {
 	return ContentModel
 		.findOne(query, fields)
 		.populate("meta.contentType")
 		.lean()
-		.exec()
-		.then(function(response) {
-			return response;
-		}, function(err) {
-			throw err;
-		});
+		.exec();
 }
 
-function fetchDoc(doc) {
+function fetchContent(query, fields) {
+	return ContentModel
+		.find(query, fields)
+		.populate("meta.contentType")
+		.lean()
+		.exec();
+}
+
+function fetchDoc(doc, type) {
 	return fetchOne(
-			_.assign(contentMongoQuery(), {
+			_.assign(contentMongoQuery(type), {
 				uuid: typeof doc === "string" ? doc : doc.uuid,
 			}),
 			contentMongoFields
 		)
-		.then(function(item) {
-			return PopulateHelper.fields.one(item, {
-				populate: "customItems,roadmap",
-				lang: languageHelper.currentLanguage(), // @todo: get language from request
-			}).then(function(pItem) {
-				pItem.customItems = pItem.fields.customItems.map(function(i) {
-					return i.value;
-				});
-				delete pItem.fields.customItems;
+		.then(parseDoc.bind(null, type));
+}
 
-				pItem.fields.roadmap = pItem.fields.roadmap.map(function(i) {
-					return i.value;
-				});
-
-				pItem.fields.productCategory = "main_documentation";
-
-				return pItem;
-			});
-		}, function(err) {
-			throw err;
+function parseDoc(type, doc) {
+	return PopulateHelper.fields.one(doc, {
+		populate: "customItems,roadmap",
+		lang: languageHelper.currentLanguage(), // @todo: get language from request
+	}).then(function(pItem) {
+		pItem.customItems = _.get(pItem, "fields.customItems", []).map(function(i) {
+			return i.value;
 		});
+		delete pItem.fields.customItems;
+
+		pItem.fields.roadmap = _.get(pItem, "fields.roadmap", []).map(function(i) {
+			return i.value;
+		});
+
+		pItem.fields.productCategory = type;
+
+		return pItem;
+	}, errHandler);
+}
+
+function fetchDocs(contentType) {
+	var parsed = [];
+
+	return fetchContent(
+		contentMongoQuery(contentType),
+		contentMongoFields
+	)
+	.then(function(docs) {
+		return runQueue(docs.map(function(doc) {
+			return function() {
+				return parseDoc(contentType, doc)
+					.then(function(pDoc) {
+						parsed.push(pDoc);
+					}, errHandler);
+			};
+		}));
+	}, errHandler)
+	.then(function() {
+		return parsed;
+	}, errHandler);
 }
 
 module.exports = {
 	fetchDoc: fetchDoc,
+	fetchDocs: fetchDocs,
 };

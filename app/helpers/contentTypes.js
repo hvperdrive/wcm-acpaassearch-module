@@ -12,6 +12,7 @@ var safeLabels = [
 	"basic_page",
 	"timeline_item",
 	"main_documentation",
+	"news_item",
 ];
 var contentTypes = {};
 
@@ -60,3 +61,8 @@ module.exports = function getContentTypes() {
 
 module.exports.reload = reload;
 module.exports.verifyType = verifyType;
+module.exports.indexableTypes = [
+	"product",
+	"main_documentation",
+	"news_item",
+];
