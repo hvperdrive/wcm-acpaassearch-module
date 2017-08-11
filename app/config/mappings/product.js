@@ -39,6 +39,14 @@ module.exports = {
 						},
 					},
 				},
+				"body": {
+					"type": "nested",
+					"properties": {
+						"value": {
+							"type": "string",
+						},
+					},
+				},
 				"roadmap": {
 					"type": "nested",
 					"properties": {
@@ -73,15 +81,15 @@ module.exports = {
 						"slug": {
 							"index": "no",
 							"type": "string",
-                        },
-                        "api": {
-                            "index": "not_analyzed",
-                            "type": "string"
-                        },
-                        "version": {
-                            "index": "not_analyzed",
-                            "type": "string"
-                        },
+						},
+						"api": {
+							"index": "not_analyzed",
+							"type": "string",
+						},
+						"version": {
+							"index": "not_analyzed",
+							"type": "string",
+						},
 						"visibleFor": {
 							"index": "not_analyzed",
 							"type": "string",

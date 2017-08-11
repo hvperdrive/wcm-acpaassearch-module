@@ -1,8 +1,16 @@
 "use strict";
 
 require("rootpath")();
+var _ = require("lodash");
 
 var productHelper = require("./product");
+var docHelper = require("./doc");
+var indexableTypes = require("./contentTypes").indexableTypes;
+var runQueue = require("./queue").runQueue;
+
+function errHandler(err) {
+	throw err;
+}
 
 module.exports = function() {
 	var elasticsearch = require("./elastic");
@@ -10,11 +18,22 @@ module.exports = function() {
 	return productHelper
 		.fetchProducts()
 		.then(function(products) {
-			return productHelper.syncProducts(products, elasticsearch);
-		}, function(err) {
-			throw err;
+			var items = products;
+
+			return runQueue(indexableTypes.map(function(type) {
+				return function() {
+					return docHelper.fetchDocs(type)
+						.then(function(docs) {
+							items = items.concat(docs);
+						}, errHandler);
+				};
+			}))
+			.then(function() {
+				return items;
+			}, errHandler);
 		})
-		.catch(function(err) {
-			throw err;
-		});
+		.then(function(products) {
+			return productHelper.syncProducts(products, elasticsearch);
+		}, errHandler)
+		.catch(errHandler);
 };

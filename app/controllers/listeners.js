@@ -15,6 +15,11 @@ var actions = {
 		sync: productHelper.syncProduct,
 		remove: productHelper.removeProduct,
 	},
+	news_item: { // eslint-disable-line camelcase
+		fetch: docHelper.fetchDoc,
+		sync: productHelper.syncProduct,
+		remove: productHelper.removeProduct,
+	},
 };
 
 function verifyAction(action, contentType) {
@@ -44,7 +49,7 @@ function handleUpdate(contentItem, action) {
 	}
 
 	if (fetchAction) {
-		return fetchAction(contentItem)
+		return fetchAction(contentItem, contentType.type)
 			.then(function(populatedContent) {
 				syncAction(populatedContent, elasticsearch);
 			}, function(err) {
