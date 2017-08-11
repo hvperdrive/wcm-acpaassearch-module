@@ -55,14 +55,14 @@ module.exports.search = function search(req, res) {
 	}
 	execSearch(SearchHelper.getQuery(q, getLimit(req), getUserType(req)), ["product"])
 		.then(
-		function onSuccess(result) {
-			res.status(200).json(SearchHelper.resultMapper(result));
-		},
-		function onError(responseError) {
-			res.status(500).json({
-				err: responseError,
-			});
-		}
+			function onSuccess(result) {
+				res.status(200).json(SearchHelper.resultMapper(result));
+			},
+			function onError(responseError) {
+				res.status(500).json({
+					err: responseError,
+				});
+			}
 		);
 };
 
@@ -77,14 +77,14 @@ module.exports.suggest = function suggest(req, res) {
 
 	execSearch(SearchHelper.getSuggestQuery(q, getLimit(req), getUserType(req)), ["product"])
 		.then(
-		function onSuccess(result) {
-			res.status(200).json(SearchHelper.suggestMapper(result));
-		},
-		function onError(responseError) {
-			res.status(500).json({
-				err: responseError,
-			});
-		}
+			function onSuccess(result) {
+				res.status(200).json(SearchHelper.suggestMapper(result));
+			},
+			function onError(responseError) {
+				res.status(500).json({
+					err: responseError,
+				});
+			}
 		);
 };
 
@@ -106,13 +106,13 @@ module.exports.category = function category(req, res) {
 
 	execSearch(SearchHelper.getCategoryQuery(q, cat, getSkip(req), getLimit(req), getUserType(req)), ["product"])
 		.then(
-		function onSuccess(result) {
-			res.status(200).json(SearchHelper.suggestMapper(result));
-		},
-		function onError(responseError) {
-			res.status(500).json({
-				err: responseError,
-			});
-		}
+			function onSuccess(result) {
+				res.status(200).json(SearchHelper.suggestMapper(result));
+			},
+			function onError(responseError) {
+				res.status(500).json({
+					err: responseError,
+				});
+			}
 		);
 };
