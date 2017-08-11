@@ -62,7 +62,7 @@ module.exports = function getContentTypes() {
 module.exports.reload = reload;
 module.exports.verifyType = verifyType;
 module.exports.indexableTypes = [
-	"product",
+	// product is indexed separately due to all the population needs
 	"main_documentation",
 	"news_item",
 ];
