@@ -91,3 +91,11 @@ module.exports.start = function start() {
 
 	Emitter.on("contentRemoved", onContentRemoved);
 };
+
+module.exports.stop = function stop() {
+	Emitter.removeListener("contentCreated", onContentCreated);
+
+	Emitter.removeListener("contentUpdated", onContentUpdated);
+
+	Emitter.removeListener("contentRemoved", onContentRemoved);
+};

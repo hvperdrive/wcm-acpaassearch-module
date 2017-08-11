@@ -4,7 +4,7 @@ var SearchHelper = require("../helpers/search");
 var variablesHelper = require("../helpers/variables");
 
 var execSearch = function execSearch(body, type) {
-    var variables = variablesHelper();
+	var variables = variablesHelper();
 
 	return elasticClient.client.search({
 		index: variables.acpaassearch.variables.index,
@@ -18,7 +18,7 @@ var getQuery = function getQuery(req) {
 };
 
 var getLimit = function getLimit(req) {
-    // Total request cannot be bigger then 10000 (Elastic weardness).
+	// Total request cannot be bigger then 10000 (Elastic weardness).
 	var limit = req.query.limit ? parseInt(req.query.limit) : 10000;
 	var skip = req.query.skip ? parseInt(req.query.skip) : 0;
 
@@ -42,11 +42,11 @@ var getSkip = function getSkip(req) {
 };
 
 var getUserType = function getUserType(req) {
-    return _.get(req, "member.meta.type", null);
+	return _.get(req, "member.meta.type", null);
 };
 
 module.exports.search = function search(req, res) {
-    var q = getQuery(req);
+	var q = getQuery(req);
 
 	if (!q) {
 		return res.status(400).json({
