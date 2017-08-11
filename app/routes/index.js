@@ -6,9 +6,6 @@ module.exports = function(app, hooks) {
 	// Initiate elastic
 	require("../helpers/elastic");
 
-	// Setup listeners
-	listeners.start();
-
 	// Setup hooks
 	require("../controllers/hooks")(hooks);
 
