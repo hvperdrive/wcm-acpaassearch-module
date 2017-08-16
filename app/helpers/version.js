@@ -151,7 +151,7 @@ function transformVersion(version) {
 
 function syncVersion(version, elasticsearch) {
 	return elasticsearch.create({
-		index: index,
+		index: elasticsearch.index,
 		type: "version",
 		id: version.uuid,
 		body: transformVersion(version),
@@ -160,7 +160,7 @@ function syncVersion(version, elasticsearch) {
 
 function updateVersion(version, elasticsearch) {
 	return elasticsearch.update({
-		index: index,
+		index: elasticsearch.index,
 		type: "version",
 		id: version.uuid,
 		body: transformVersion(version), // @todo: partial update
@@ -169,7 +169,7 @@ function updateVersion(version, elasticsearch) {
 
 function removeVersion(version, elasticsearch) {
 	return elasticsearch.delete({
-		index: index,
+		index: elasticsearch.index,
 		type: "version",
 		id: version.uuid,
 	});
