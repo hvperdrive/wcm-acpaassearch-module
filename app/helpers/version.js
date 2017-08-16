@@ -71,7 +71,7 @@ function fetchVersions(uuid, product) {
 			result.versionItems = _.flatten(viewResult.data.map(function(version) {
 				return ["gettingStarted", "releaseNotes", "features", "architecture", "faq"].map(function(field) {
 					return {
-						version: languageHelper.verifyMultilanguage(version.fields.versionLabel),
+						version: getVersionLabel(version),
 						slug: field,
 						value: languageHelper.verifyMultilanguage(version.fields[field]),
 					};
@@ -81,7 +81,7 @@ function fetchVersions(uuid, product) {
 			var versionApiS = _.flattenDeep(viewResult.data.map(function(version) {
 				return version.fields.apiS.map(function(api) {
 					return {
-						version: languageHelper.verifyMultilanguage(version.fields.versionLabel),
+						version: getVersionLabel(version),
 						api: api.value,
 					};
 				});
@@ -131,11 +131,19 @@ function fetchVersions(uuid, product) {
 		});
 }
 
+function getVersionLabel(version) {
+	var major = _.get(version, "fields.versionMajor", 0);
+	var minor = _.get(version, "fields.versionMinor", 0);
+	var patch = _.get(version, "fields.versionPatch", 0);
+
+	return "v" + [major, minor, patch].join(".");
+}
+
 function transformVersion(version) {
 	return {
 		uuid: version.uuid,
 		fields: {
-			versionLabel: languageHelper.verifyMultilanguage(version.fields.versionLabel),
+			versionLabel: getVersionLabel(version),
 			architecture: languageHelper.verifyMultilanguage(version.fields.architecture),
 			faq: languageHelper.verifyMultilanguage(version.fields.faq),
 			features: languageHelper.verifyMultilanguage(version.fields.features),
@@ -188,4 +196,5 @@ module.exports = {
 	syncVersions: syncVersions,
 	updateVersion: updateVersion,
 	removeVersion: removeVersion,
+	getVersionLabel: getVersionLabel,
 };
