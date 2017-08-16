@@ -72,7 +72,6 @@ function populateDoc(type, doc) {
 
 function parseDoc(type, doc) {
 	var item = _.cloneDeep(doc);
-	var contentType = contentTypesHelper.verifyType(type);
 
 	if (!doc.hasOwnProperty("customItems")) {
 		item.customItems = _.get(item, "fields.customItems", []).map(function(i) {
@@ -85,9 +84,9 @@ function parseDoc(type, doc) {
 		return typeof i === "string" ? i : i.value;
 	});
 
-	item.fields.productCategory = contentType;
+	item.fields.productCategory = contentTypesHelper.verifyType(type) || type;
 
-	item.fields.versionLabel = getVersionLabel(contentType, item);
+	item.fields.versionLabel = getVersionLabel(type, item);
 
 	return item;
 }
