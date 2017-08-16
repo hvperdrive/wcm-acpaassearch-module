@@ -1,12 +1,12 @@
 "use strict";
 
 angular
-	.module("acpaassearch_0.0.38")
+	.module("acpaassearch_0.0.39")
 	.provider("acpaassearchConfig", [
 		function membersConfig() {
 			this.API = {
 				name: "acpaassearch",
-				version: "0.0.38",
+				version: "0.0.39",
 				basePath: "app/modules/",
 			};
 

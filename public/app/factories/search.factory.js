@@ -1,7 +1,7 @@
 "use strict";
 
 angular
-	.module("acpaassearch_0.0.38.factories")
+	.module("acpaassearch_0.0.39.factories")
 	.factory("acpaassearchFactory", [
 		"$http",
 		"configuration",
