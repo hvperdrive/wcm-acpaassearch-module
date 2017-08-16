@@ -42,7 +42,7 @@ function handleUpdate(contentItem, action) {
 	var fetchAction = verifyAction("fetch", contentType);
 
 	if (!syncAction) {
-		return productHelper.fetchProductsForDoc(contentItem, elasticsearch)
+		return productHelper.fetchProductsForDoc(docHelper.parseDoc(contentType, contentItem), elasticsearch)
 			.then(function(products) {
 				return productHelper.syncProducts(products, elasticsearch);
 			});
