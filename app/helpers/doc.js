@@ -66,7 +66,9 @@ function populateDoc(type, doc) {
 		populate: "customItems,roadmap",
 		lang: languageHelper.currentLanguage(), // @todo: get language from request
 	}).then(function(item) {
-		return parseDoc(type, item);
+		return parseDoc(type, _.assign(item, {
+			fields: _.assign(doc.fields, item.fields)
+		}));
 	}, errHandler);
 }
 
