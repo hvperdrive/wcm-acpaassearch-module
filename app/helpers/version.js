@@ -144,7 +144,7 @@ function transformVersion(version) {
 			apiS: languageHelper.verifyMultilanguage(version.fields.apiS),
 		},
 		meta: {
-			contentType: contentTypes.verifyType(version.meta.contentType).id,
+			contentType: contentTypes.verifyType(version.meta.contentType)._id,
 		},
 	};
 }

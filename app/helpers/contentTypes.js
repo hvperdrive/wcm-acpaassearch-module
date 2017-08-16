@@ -20,7 +20,7 @@ var toList = function(types) {
 	return Object.keys(types).reduce(function(acc, curr) {
 		acc.push({
 			type: curr,
-			id: types[curr],
+			_id: types[curr],
 		});
 
 		return acc;
@@ -51,7 +51,7 @@ function verifyType(type) {
 	type = typeof type === "string" ? type : type._id;
 
 	return toList(contentTypes).find(function(t) {
-		return t.id === type.toString();
+		return t._id === type.toString();
 	});
 }
 
