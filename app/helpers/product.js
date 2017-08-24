@@ -132,7 +132,7 @@ function transformField(field) {
 function transformProduct(product) {
 	var meta = {
 		activeLanguages: product.meta.activeLanguages,
-		contentType: typeof product.meta.contentType === "string" ? product.meta.contentType : contentTypesHelper.verifyType(product.meta.contentType).id,
+		contentType: typeof product.meta.contentType === "string" ? product.meta.contentType : contentTypesHelper.verifyType(product.meta.contentType)._id,
 		created: product.meta.created,
 		lastModified: product.meta.lastModified,
 		publishDate: product.meta.publishDate,

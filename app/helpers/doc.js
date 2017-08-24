@@ -8,6 +8,8 @@ var ContentModel = require("app/models/content");
 var PopulateHelper = require("app/helpers/populate");
 var languageHelper = require("./language");
 var contentTypesHelper = require("./contentTypes");
+var versionHelper = require("./version");
+var apiHelper = require("./api");
 
 var contentMongoQuery = function(type) {
 	return {
@@ -56,27 +58,52 @@ function fetchDoc(doc, type) {
 			}),
 			contentMongoFields
 		)
-		.then(parseDoc.bind(null, type));
+		.then(populateDoc.bind(null, type));
 }
 
-function parseDoc(type, doc) {
+function populateDoc(type, doc) {
 	return PopulateHelper.fields.one(doc, {
 		populate: "customItems,roadmap",
 		lang: languageHelper.currentLanguage(), // @todo: get language from request
-	}).then(function(pItem) {
-		pItem.customItems = _.get(pItem, "fields.customItems", []).map(function(i) {
-			return i.value;
-		});
-		delete pItem.fields.customItems;
-
-		pItem.fields.roadmap = _.get(pItem, "fields.roadmap", []).map(function(i) {
-			return i.value;
-		});
-
-		pItem.fields.productCategory = type;
-
-		return pItem;
+	}).then(function(item) {
+		return parseDoc(type, _.assign(item, {
+			fields: _.assign(doc.fields, item.fields)
+		}));
 	}, errHandler);
+}
+
+function parseDoc(type, doc) {
+	var item = _.cloneDeep(doc);
+
+	if (!doc.hasOwnProperty("customItems")) {
+		item.customItems = _.get(item, "fields.customItems", []).map(function(i) {
+			return i.value;
+		});
+		delete item.fields.customItems;
+	}
+
+	item.fields.roadmap = _.get(item, "fields.roadmap", []).map(function(i) {
+		return typeof i === "string" ? i : i.value;
+	});
+
+	item.fields.productCategory = contentTypesHelper.verifyType(type) || type;
+
+	item.fields.versionLabel = getVersionLabel(type, item);
+
+	return item;
+}
+
+function getVersionLabel(type, doc) {
+	var contentTypes = contentTypesHelper();
+
+	switch (_.get(contentTypesHelper.verifyType(type), "_id")) {
+		case contentTypes.api:
+			return apiHelper.getVersionLabel(doc);
+		case contentTypes.product_doc_version:
+			return versionHelper.getVersionLabel(doc);
+		default:
+			return "";
+	}
 }
 
 function fetchDocs(contentType) {
@@ -89,7 +116,7 @@ function fetchDocs(contentType) {
 	.then(function(docs) {
 		return runQueue(docs.map(function(doc) {
 			return function() {
-				return parseDoc(contentType, doc)
+				return populateDoc(contentType, doc)
 					.then(function(pDoc) {
 						parsed.push(pDoc);
 					}, errHandler);
@@ -104,4 +131,7 @@ function fetchDocs(contentType) {
 module.exports = {
 	fetchDoc: fetchDoc,
 	fetchDocs: fetchDocs,
+	populateDoc: populateDoc,
+	getVersionLabel: getVersionLabel,
+	parseDoc: parseDoc,
 };

@@ -88,6 +88,11 @@ function checkVisibility(fields) {
 	return value >= 0 ? values[value] : "invisible";
 }
 
+function getVersionLabel(api) {
+	return "v" + _.get(api, "fields.version", 0);
+}
+
 module.exports = {
 	fetchApiS: fetchApiS,
+	getVersionLabel: getVersionLabel,
 };
