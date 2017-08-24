@@ -10,6 +10,7 @@ var languageHelper = require("./language");
 var contentTypesHelper = require("./contentTypes");
 var versionHelper = require("./version");
 var matcher = require("./matcher");
+var fieldHelper = require("./field");
 
 var contentMongoQuery = function() {
 	return {
@@ -145,13 +146,13 @@ function transformProduct(product) {
 		return {
 			uuid: item.uuid,
 			title: languageHelper.verifyMultilanguage(item.fields.title),
-			notes: languageHelper.verifyMultilanguage(item.fields.notes),
+			notes: fieldHelper.striptags(languageHelper.verifyMultilanguage(item.fields.notes)),
 			version: languageHelper.verifyMultilanguage(item.fields.version),
 		};
 	});
 	var customItems = _.get(product, "customItems", []).map(function(item) {
 		return {
-			body: languageHelper.verifyMultilanguage(item.fields.body),
+			body: fieldHelper.striptags(languageHelper.verifyMultilanguage(item.fields.body)),
 			title: languageHelper.verifyMultilanguage(item.fields.title),
 			uuid: item.uuid,
 			slug: languageHelper.verifyMultilanguage(item.meta.slug),
@@ -163,10 +164,10 @@ function transformProduct(product) {
 	var fields = {
 		productCategory: product.fields.productCategory,
 		title: transformField(product.fields.title),
-		intro: transformField(product.fields.intro),
-		about: transformField(product.fields.about),
-		gettingStarted: transformField(product.fields.gettingStarted),
-		body: transformField(product.fields.body),
+		intro: transformField(fieldHelper.striptags(product.fields.intro)),
+		about: transformField(fieldHelper.striptags(product.fields.about)),
+		gettingStarted: transformField(fieldHelper.striptags(product.fields.gettingStarted)),
+		body: transformField(fieldHelper.striptags(product.fields.body)),
 		roadmap: roadmap,
 		customItems: customItems,
 		versionItems: product.versionItems,

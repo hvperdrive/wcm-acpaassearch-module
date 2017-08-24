@@ -6,9 +6,9 @@ var _ = require("lodash");
 var ContentModel = require("app/models/content");
 var contentTypes = require("./contentTypes");
 var languageHelper = require("./language");
-var index = require("../config/mappings").index;
 var apiHelper = require("./api");
 var populateHelper = require("app/helpers/populate");
+var fieldHelper = require("./field");
 
 var contentMongoQuery = function() {
 	return {
@@ -73,7 +73,7 @@ function fetchVersions(uuid, product) {
 					return {
 						version: getVersionLabel(version),
 						slug: field,
-						value: languageHelper.verifyMultilanguage(version.fields[field]),
+						value: fieldHelper.striptags(languageHelper.verifyMultilanguage(version.fields[field])),
 					};
 				});
 			}));
@@ -106,7 +106,7 @@ function fetchVersions(uuid, product) {
 							version: version.version,
 							api: languageHelper.verifyMultilanguage(api.meta.slug),
 							slug: "about",
-							value: languageHelper.verifyMultilanguage(api.fields.about),
+							value: fieldHelper.striptags(languageHelper.verifyMultilanguage(api.fields.about)),
 							title: languageHelper.verifyMultilanguage(api.fields.title),
 							visibleFor: api.fields.visibleFor,
 						};
@@ -144,11 +144,11 @@ function transformVersion(version) {
 		uuid: version.uuid,
 		fields: {
 			versionLabel: getVersionLabel(version),
-			architecture: languageHelper.verifyMultilanguage(version.fields.architecture),
-			faq: languageHelper.verifyMultilanguage(version.fields.faq),
-			features: languageHelper.verifyMultilanguage(version.fields.features),
-			gettingStarted: languageHelper.verifyMultilanguage(version.fields.gettingStarted),
-			releaseNotes: languageHelper.verifyMultilanguage(version.fields.releaseNotes),
+			architecture: fieldHelper.striptags(languageHelper.verifyMultilanguage(version.fields.architecture)),
+			faq: fieldHelper.striptags(languageHelper.verifyMultilanguage(version.fields.faq)),
+			features: fieldHelper.striptags(languageHelper.verifyMultilanguage(version.fields.features)),
+			gettingStarted: fieldHelper.striptags(languageHelper.verifyMultilanguage(version.fields.gettingStarted)),
+			releaseNotes: fieldHelper.striptags(languageHelper.verifyMultilanguage(version.fields.releaseNotes)),
 			apiS: languageHelper.verifyMultilanguage(version.fields.apiS),
 		},
 		meta: {
