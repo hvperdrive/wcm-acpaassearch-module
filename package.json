@@ -69,7 +69,8 @@
     "dependencies": {
         "elasticsearch": "~13.2.0",
         "lodash": "~4.17.4",
-        "node-uuid": "~1.4.8"
+        "node-uuid": "~1.4.8",
+        "striptags": "^3.0.1"
     },
     "devDependencies": {
         "@district01/eslint-config": "~1.0.0",
