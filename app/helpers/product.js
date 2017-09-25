@@ -92,13 +92,14 @@ function fetchProduct(product) {
 
 function populateProduct(product) {
 	return PopulateHelper.fields.one(product, {
-		populate: "customItems,roadmap",
+		populate: "customItems,hiddenItems,roadmap",
 		lang: languageHelper.currentLanguage(), // @todo: get language from request
 	}).then(function(pItem) {
-		pItem.customItems = pItem.fields.customItems.map(function(i) {
+		pItem.customItems = pItem.fields.customItems.concat(pItem.fields.hiddenItems).map(function(i) {
 			return i.value;
 		});
 		delete pItem.fields.customItems;
+		delete pItem.fields.hiddenItems;
 
 		pItem.fields.roadmap = pItem.fields.roadmap.map(function(i) {
 			return i.value;
