@@ -83,6 +83,7 @@ function parseDoc(type, doc) {
 			return i.value;
 		});
 		delete item.fields.customItems;
+		delete item.fields.hiddenItems;
 	}
 
 	item.fields.roadmap = _.get(item, "fields.roadmap", []).map(function(i) {
