@@ -63,7 +63,7 @@ function fetchDoc(doc, type) {
 
 function populateDoc(type, doc) {
 	return PopulateHelper.fields.one(doc, {
-		populate: "customItems,roadmap",
+		populate: "customItems,hiddenItems,roadmap",
 		lang: languageHelper.currentLanguage(), // @todo: get language from request
 	}).then(function(item) {
 		return parseDoc(type, _.assign(item, {
@@ -76,7 +76,10 @@ function parseDoc(type, doc) {
 	var item = _.cloneDeep(doc);
 
 	if (!doc.hasOwnProperty("customItems")) {
-		item.customItems = _.get(item, "fields.customItems", []).map(function(i) {
+		var customItems = _.get(item, "fields.customItems", []);
+		var hiddenItems = _.get(item, "fields.hiddenItems", []);
+
+		item.customItems = customItems.concat(hiddenItems).map(function(i) {
 			return i.value;
 		});
 		delete item.fields.customItems;

@@ -95,7 +95,10 @@ function populateProduct(product) {
 		populate: "customItems,hiddenItems,roadmap",
 		lang: languageHelper.currentLanguage(), // @todo: get language from request
 	}).then(function(pItem) {
-		pItem.customItems = pItem.fields.customItems.concat(pItem.fields.hiddenItems).map(function(i) {
+		var customItems = _.get(pItem, "fields.customItems", []);
+		var hiddenItems = _.get(pItem, "fields.hiddenItems", []);
+
+		pItem.customItems = customItems.concat(hiddenItems).map(function(i) {
 			return i.value;
 		});
 		delete pItem.fields.customItems;
