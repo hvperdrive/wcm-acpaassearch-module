@@ -22,6 +22,17 @@ var contentMongoFields = {
 	"meta.slug": 1,
 };
 
+function parseCustomItems(items, api) {
+	return items.map(function(item) {
+		return {
+			api: languageHelper.verifyMultilanguage(api.meta.slug),
+			apiUuid: api.uuid,
+			uuid: item.value,
+			visibleFor: api.fields.visibleFor,
+		};
+	});
+}
+
 function fetchApiS(uuids) {
 	return ContentModel.find(_.assign(contentMongoQuery(), {
 		uuid: {
@@ -37,14 +48,10 @@ function fetchApiS(uuids) {
 		};
 
 		var apiCustomItems = _.flattenDeep(apiS.map(function(api) {
-			return api.fields.customItems.map(function(item) {
-				return {
-					api: languageHelper.verifyMultilanguage(api.meta.slug),
-					apiUuid: api.uuid,
-					uuid: item.value,
-					visibleFor: api.fields.visibleFor,
-				};
-			});
+			var customItems = _.get(api, "fields.customItems", []);
+			var hiddenItems = _.get(api, "fields.hiddenItems", []);
+
+			return parseCustomItems(customItems.concat(hiddenItems), api);
 		}));
 		var apiSToFetch = apiCustomItems.map(function(item) {
 			return item.uuid;
