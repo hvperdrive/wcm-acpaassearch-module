@@ -1,7 +1,7 @@
 "use strict";
 
 angular
-	.module("acpaassearch_0.0.40.controllers")
+	.module("acpaassearch_0.0.42.controllers")
 	.controller("acpaassearchOverviewController", [
 		"$scope",
 		"$timeout",
