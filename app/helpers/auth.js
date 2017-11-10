@@ -1,11 +1,13 @@
-var getModuleMethod = require("app/helpers/modules/lib").getModuleMethod;
+var getModule = require("@wcm/module-helper").getModule;
 
 module.exports.prepareMember = function prepareMember(req, res, next) {
-	var memberAccess = getModuleMethod("members", "MemberAccessMiddleware");
+	return getModule("@wcm/members").then(function(mod) {
+		if (!mod || !mod.memberAccessMiddleware || typeof mod.memberAccessMiddleware.hard !== "function") {
+			return next();
+		}
 
-	if (memberAccess && typeof memberAccess.hard === "function") {
-		return memberAccess.soft(req, res, next);
-	}
-
-	return next();
+		return mod.memberAccessMiddleware.hard(req, res, next);
+	}, function() {
+		return next();
+	});
 };

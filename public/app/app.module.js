@@ -1,18 +1,18 @@
 "use strict";
 
-angular.module("acpaassearch_0.0.42.directives", []);
-angular.module("acpaassearch_0.0.42.factories", []);
-angular.module("acpaassearch_0.0.42.services", ["acpaassearch_0.0.42.factories"]);
-angular.module("acpaassearch_0.0.42.controllers", ["acpaassearch_0.0.42.services"]);
+angular.module("acpaassearch_1.0.0.directives", []);
+angular.module("acpaassearch_1.0.0.factories", []);
+angular.module("acpaassearch_1.0.0.services", ["acpaassearch_1.0.0.factories"]);
+angular.module("acpaassearch_1.0.0.controllers", ["acpaassearch_1.0.0.services"]);
 
 angular
-	.module("acpaassearch_0.0.42", [
+	.module("acpaassearch_1.0.0", [
 		"pelorus.services",
 
-		"acpaassearch_0.0.42.directives",
-		"acpaassearch_0.0.42.factories",
-		"acpaassearch_0.0.42.services",
-		"acpaassearch_0.0.42.controllers",
+		"acpaassearch_1.0.0.directives",
+		"acpaassearch_1.0.0.factories",
+		"acpaassearch_1.0.0.services",
+		"acpaassearch_1.0.0.controllers",
 	])
 	.run([function() {
 		console.log("Members module is available!"); // eslint-disable-line no-console
