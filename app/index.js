@@ -3,9 +3,8 @@ var contentTypes = require("./helpers/contentTypes");
 var searchRoutes = require("./routes/search");
 var variablesHelper = require("./helpers/variables");
 
-
 module.exports = function(app, hooks, info) {
-	variablesHelper.set(info);
+	variablesHelper.reload(info);
 
 	// Initiate elastic
 	require("./helpers/elastic");

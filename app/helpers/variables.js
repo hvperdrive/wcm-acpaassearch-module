@@ -5,10 +5,17 @@ var VariableHelper = require("@wcm/module-helper").variables;
 var packageInfo = null;
 var variables = null;
 
-var init = function init() {
+module.exports = function getVariables() {
+	return variables;
+};
+
+module.exports.reload = function reload(info) {
+	packageInfo = info || null;
+
 	if (packageInfo === null) {
 		return Q.reject("No packageInfo available!");
 	}
+
 	return VariableHelper.getAll(packageInfo.name, packageInfo.version)
 		.then(function onSuccess(response) {
 			variables = response;
@@ -20,14 +27,6 @@ var init = function init() {
 			console.error(responseError);
 		});
 };
-
-init();
-
-module.exports = function getVariables() {
-	return variables;
-};
-
-module.exports.reload = init;
 
 module.exports.set = function set(info) {
 	packageInfo = info;
