@@ -10,7 +10,7 @@ module.exports = function getVariables() {
 };
 
 module.exports.reload = function reload(info) {
-	packageInfo = info || null;
+	packageInfo = info || packageInfo || null;
 
 	if (packageInfo === null) {
 		return Q.reject("No packageInfo available!");
