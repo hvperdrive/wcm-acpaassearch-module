@@ -1,7 +1,6 @@
 "use strict";
 
 require("rootpath")();
-var _ = require("lodash");
 
 var ContentTypeModel = require("app/models/contentType");
 
@@ -32,7 +31,7 @@ function reload() {
 		.find({
 			"meta.deleted": false,
 			"meta.safeLabel": {
-				$in: safeLabels
+				$in: safeLabels,
 			},
 		})
 		.lean()

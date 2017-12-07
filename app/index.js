@@ -7,7 +7,7 @@ module.exports = function(app, hooks, info) {
 	variablesHelper.reload(info);
 
 	// Initiate elastic
-	require("./helpers/elastic");
+	require("./helpers/elastic").reload();
 
 	// Setup hooks
 	require("./controllers/hooks")(hooks);
