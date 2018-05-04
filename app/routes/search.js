@@ -14,7 +14,7 @@ var MethodSecurity = require("@wcm/module-helper").methodSecurity;
 // This is a helper middleware function generator that returns a middleware function that can be injected into route as seen below.
 // The function will check if the user has the right permissions to execute this action.
 // You need to specify the operation type that needs to be checked against (in this case it is the operation type specified in our package.json file).
-var PermissionsSecurity = require("@wcm/module-helper").permissionsSecurity("members");
+var PermissionsSecurity = require("@wcm/module-helper").permissionsSecurity("acpaassearch");
 // Building the baseUrl based on the configuration. Every API call needs to be located after the api/ route
 var baseUrl = "/" + config.api.prefix + config.api.version + "acpaassearch";
 

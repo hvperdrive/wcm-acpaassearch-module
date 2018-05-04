@@ -1,8 +1,9 @@
 "use strict";
 
 require("rootpath")();
+var path = require("path");
 
-var ContentTypeModel = require("app/models/contentType");
+var ContentTypeModel = require(path.join(process.cwd(), "app/models/contentType"));
 
 var safeLabels = [
 	"product",

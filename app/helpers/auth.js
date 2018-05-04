@@ -6,7 +6,7 @@ module.exports.prepareMember = function prepareMember(req, res, next) {
 			return next();
 		}
 
-		return mod.memberAccessMiddleware.hard(req, res, next);
+		return mod.memberAccessMiddleware.soft(req, res, next);
 	}, function() {
 		return next();
 	});

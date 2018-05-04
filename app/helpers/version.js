@@ -1,13 +1,14 @@
 "use strict";
 
 var Q = require("q");
+var path = require("path");
 var _ = require("lodash");
 
-var ContentModel = require("app/models/content");
+var ContentModel = require(path.join(process.cwd(), "app/models/content"));
 var contentTypes = require("./contentTypes");
 var languageHelper = require("./language");
 var apiHelper = require("./api");
-var populateHelper = require("app/helpers/populate");
+var populateHelper = require(path.join(process.cwd(), "app/helpers/populate"));
 var fieldHelper = require("./field");
 
 var contentMongoQuery = function() {

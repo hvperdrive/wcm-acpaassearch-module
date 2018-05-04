@@ -3,9 +3,10 @@
 require("rootpath")();
 var runQueue = require("./queue").runQueue;
 var _ = require("lodash");
+var path = require("path");
 
-var ContentModel = require("app/models/content");
-var PopulateHelper = require("app/helpers/populate");
+var ContentModel = require(path.join(process.cwd(), "app/models/content"));
+var PopulateHelper = require(path.join(process.cwd(), "app/helpers/populate"));
 var languageHelper = require("./language");
 var contentTypesHelper = require("./contentTypes");
 var versionHelper = require("./version");
@@ -67,7 +68,7 @@ function populateDoc(type, doc) {
 		lang: languageHelper.currentLanguage(), // @todo: get language from request
 	}).then(function(item) {
 		return parseDoc(type, _.assign(item, {
-			fields: _.assign(doc.fields, item.fields)
+			fields: _.assign(doc.fields, item.fields),
 		}));
 	}, errHandler);
 }

@@ -5,9 +5,12 @@ var listeners = require("../controllers/listeners");
 
 var onConfigurationChanged = function onConfigurationChanged() {
 	// Reload config
-	variablesHelper.reload();
-	elastic.reload();
-	contentTypesHelper.reload();
+	variablesHelper.reload()
+		.then(function() {
+			elastic.reload();
+			contentTypesHelper.reload();
+		});
+
 };
 
 var beforeRemove = function beforeRemove() {
