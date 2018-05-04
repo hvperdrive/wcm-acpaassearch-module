@@ -1,8 +1,9 @@
 "use strict";
 
 var _ = require("lodash");
+var path = require("path");
 
-var ContentModel = require("app/models/content");
+var ContentModel = require(path.join(process.cwd(), "app/models/content"));
 var contentTypes = require("./contentTypes");
 var languageHelper = require("./language");
 

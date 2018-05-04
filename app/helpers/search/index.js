@@ -1,4 +1,3 @@
-var _ = require("lodash");
 var productSearchHelper = require("./product");
 var mappers = require("./mappers");
 

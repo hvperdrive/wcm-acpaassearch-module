@@ -2,10 +2,11 @@
 
 require("rootpath")();
 var _ = require("lodash");
+var path = require("path");
 var runQueue = require("./queue").runQueue;
 
-var ContentModel = require("app/models/content");
-var PopulateHelper = require("app/helpers/populate");
+var ContentModel = require(path.join(process.cwd(), "app/models/content"));
+var PopulateHelper = require(path.join(process.cwd(), "app/helpers/populate"));
 var languageHelper = require("./language");
 var contentTypesHelper = require("./contentTypes");
 var versionHelper = require("./version");

@@ -1,7 +1,6 @@
 "use strict";
 
 require("rootpath")();
-var _ = require("lodash");
 
 var productHelper = require("./product");
 var docHelper = require("./doc");

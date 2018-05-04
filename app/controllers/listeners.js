@@ -1,4 +1,4 @@
-var Emitter = require("app/middleware/emitter");
+var Emitter = require("@wcm/module-helper").emitter;
 
 var contentTypes = require("../helpers/contentTypes");
 var productHelper = require("../helpers/product");
@@ -85,17 +85,17 @@ function onContentRemoved(contentItem) {
 }
 
 module.exports.start = function start() {
-	Emitter.on("contentCreated", onContentCreated);
+	Emitter.on("content.created", onContentCreated);
 
-	Emitter.on("contentUpdated", onContentUpdated);
+	Emitter.on("content.updated", onContentUpdated);
 
-	Emitter.on("contentRemoved", onContentRemoved);
+	Emitter.on("content.removed", onContentRemoved);
 };
 
 module.exports.stop = function stop() {
-	Emitter.removeListener("contentCreated", onContentCreated);
+	Emitter.removeListener("content.created", onContentCreated);
 
-	Emitter.removeListener("contentUpdated", onContentUpdated);
+	Emitter.removeListener("content.updated", onContentUpdated);
 
-	Emitter.removeListener("contentRemoved", onContentRemoved);
+	Emitter.removeListener("content.removed", onContentRemoved);
 };
