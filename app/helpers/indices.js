@@ -1,15 +1,13 @@
-require("rootpath")();
+const Q = require("q");
+const _ = require("lodash");
 
-var Q = require("q");
-var _ = require("lodash");
-
-var readIndex = function readIndex(client, index) {
+const readIndex = function readIndex(client, index) {
 	return client.indices.get({
 		index: index,
 	});
 };
 
-var createIndex = function createIndex(client, index) {
+const createIndex = function createIndex(client, index) {
 	// create new schema
 	return readIndex(client, index.index)
 		.then(function onSuccess() {
@@ -31,7 +29,7 @@ var createIndex = function createIndex(client, index) {
 		});
 };
 
-var removeIndex = function removeIndex(client, index) {
+const removeIndex = function removeIndex(client, index) {
 	return readIndex(client, index)
 		.then(function onSuccess() {
 			return client.indices.delete({
@@ -44,7 +42,7 @@ var removeIndex = function removeIndex(client, index) {
 		});
 };
 
-var createOrUpdate = function createOrUpdate(client, index) {
+const createOrUpdate = function createOrUpdate(client, index) {
 	return readIndex(client, index.index)
 		.then(function(storedIndex) {
 			if (!indexesAreEqual(index, storedIndex)) {
@@ -62,7 +60,7 @@ var createOrUpdate = function createOrUpdate(client, index) {
 		});
 };
 
-var indexesAreEqual = function indexesAreEqual(index, storedIndex) {
+const indexesAreEqual = function indexesAreEqual(index, storedIndex) {
 	var equalMappings = _.isEqual(index.mappings, storedIndex.mappings);
 	var equalSettings = !index.settings || _.isEqual(index.settings, storedIndex.settings);
 
