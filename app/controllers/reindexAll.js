@@ -1,11 +1,9 @@
-"use strict";
+const syncAll = require("../helpers/syncAll");
+const indicesHelper = require("../helpers/indices");
+const mappings = require("../config/mappings");
 
-var syncAll = require("../helpers/syncAll");
-var indicesHelper = require("../helpers/indices");
-var mappings = require("../config/mappings");
-
-module.exports.reindexAll = function(req, res) {
-	var elasticsearch = require("../helpers/elastic");
+module.exports.reindexAll = (req, res) => {
+	const elasticsearch = require("../helpers/elastic");
 
 	indicesHelper
 		.remove(elasticsearch.client, elasticsearch.index)

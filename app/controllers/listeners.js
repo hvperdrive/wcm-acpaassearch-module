@@ -1,10 +1,10 @@
-var Emitter = require("@wcm/module-helper").emitter;
+const Emitter = require("@wcm/module-helper").emitter;
 
-var contentTypes = require("../helpers/contentTypes");
-var productHelper = require("../helpers/product");
-var docHelper = require("../helpers/doc");
+const contentTypes = require("../helpers/contentTypes");
+const productHelper = require("../helpers/product");
+const docHelper = require("../helpers/doc");
 
-var actions = {
+const actions = {
 	product: {
 		fetch: productHelper.fetchProduct,
 		sync: productHelper.syncProduct,
@@ -31,29 +31,27 @@ function verifyAction(action, contentType) {
 }
 
 function handleUpdate(contentItem, action) {
-	var contentType = contentTypes.verifyType(contentItem.meta.contentType);
+	const contentType = contentTypes.verifyType(contentItem.meta.contentType);
 
 	if (!contentType) {
 		return console.log("CONTENTTYPE NOT ALLOWED", contentType);
 	}
 
-	var elasticsearch = require("../helpers/elastic");
-	var syncAction = verifyAction(action, contentType);
-	var fetchAction = verifyAction("fetch", contentType);
+	const elasticsearch = require("../helpers/elastic");
+	const syncAction = verifyAction(action, contentType);
+	const fetchAction = verifyAction("fetch", contentType);
 
 	if (!syncAction) {
 		return productHelper.fetchProductsForDoc(docHelper.parseDoc(contentType, contentItem), elasticsearch)
-			.then(function(products) {
+			.then((products) => {
 				return productHelper.syncProducts(products, elasticsearch);
 			});
 	}
 
 	if (fetchAction) {
 		return fetchAction(contentItem, contentType.type)
-			.then(function(populatedContent) {
+			.then((populatedContent) => {
 				syncAction(populatedContent, elasticsearch);
-			}, function(err) {
-				throw err;
 			});
 	}
 
@@ -84,7 +82,7 @@ function onContentRemoved(contentItem) {
 	}
 }
 
-module.exports.start = function start() {
+module.exports.start = () => {
 	Emitter.on("content.created", onContentCreated);
 
 	Emitter.on("content.updated", onContentUpdated);
@@ -92,7 +90,7 @@ module.exports.start = function start() {
 	Emitter.on("content.removed", onContentRemoved);
 };
 
-module.exports.stop = function stop() {
+module.exports.stop = () => {
 	Emitter.removeListener("content.created", onContentCreated);
 
 	Emitter.removeListener("content.updated", onContentUpdated);
