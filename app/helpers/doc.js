@@ -92,7 +92,7 @@ function parseDoc(type, doc) {
 }
 
 function getVersionLabel(type, doc) {
-	var contentTypes = contentTypesHelper();
+	const contentTypes = contentTypesHelper();
 
 	switch (_.get(contentTypesHelper.verifyType(type), "_id")) {
 		case contentTypes.api:
@@ -105,7 +105,7 @@ function getVersionLabel(type, doc) {
 }
 
 function fetchDocs(contentType) {
-	var parsed = [];
+	const parsed = [];
 
 	return fetchContent(
 		contentMongoQuery(contentType),

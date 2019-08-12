@@ -1,10 +1,10 @@
-var _ = require("lodash");
-var elasticClient = require("../helpers/elastic");
-var SearchHelper = require("../helpers/search");
-var variablesHelper = require("../helpers/variables");
+const _ = require("lodash");
+const elasticClient = require("../helpers/elastic");
+const SearchHelper = require("../helpers/search");
+const variablesHelper = require("../helpers/variables");
 
-var execSearch = function execSearch(body, type) {
-	var variables = variablesHelper();
+const execSearch = function execSearch(body, type) {
+	const variables = variablesHelper();
 
 	return elasticClient.client.search({
 		index: variables.acpaassearch.variables.index,
@@ -13,14 +13,14 @@ var execSearch = function execSearch(body, type) {
 	});
 };
 
-var getQuery = function getQuery(req) {
+const getQuery = function getQuery(req) {
 	return req.query.q || req.query.query;
 };
 
-var getLimit = function getLimit(req) {
+const getLimit = function getLimit(req) {
 	// Total request cannot be bigger then 10000 (Elastic weardness).
-	var limit = req.query.limit ? parseInt(req.query.limit) : 10000;
-	var skip = req.query.skip ? parseInt(req.query.skip) : 0;
+	let limit = req.query.limit ? parseInt(req.query.limit) : 10000;
+	let skip = req.query.skip ? parseInt(req.query.skip) : 0;
 
 	if (isNaN(skip)) {
 		skip = 0;
@@ -37,16 +37,16 @@ var getLimit = function getLimit(req) {
 	return limit;
 };
 
-var getSkip = function getSkip(req) {
+const getSkip = function getSkip(req) {
 	return req.query.skip || 0;
 };
 
-var getUserType = function getUserType(req) {
+const getUserType = function getUserType(req) {
 	return _.get(req, "member.meta.type", null);
 };
 
 module.exports.search = function search(req, res) {
-	var q = getQuery(req);
+	const q = getQuery(req);
 
 	if (!q) {
 		return res.status(400).json({
@@ -67,7 +67,7 @@ module.exports.search = function search(req, res) {
 };
 
 module.exports.suggest = function suggest(req, res) {
-	var q = getQuery(req);
+	const q = getQuery(req);
 
 	if (!q) {
 		return res.status(400).json({
@@ -89,8 +89,8 @@ module.exports.suggest = function suggest(req, res) {
 };
 
 module.exports.category = function category(req, res) {
-	var q = getQuery(req);
-	var cat = req.params.uuid;
+	const q = getQuery(req);
+	const cat = req.params.uuid;
 
 	if (!q) {
 		return res.status(400).json({

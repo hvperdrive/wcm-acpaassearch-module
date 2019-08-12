@@ -1,5 +1,3 @@
-"use strict";
-
 angular
 	.module("acpaassearch_1.0.16")
 	.config([

@@ -1,22 +1,20 @@
-"use strict";
+const Q = require("q");
+const path = require("path");
+const _ = require("lodash");
 
-var Q = require("q");
-var path = require("path");
-var _ = require("lodash");
+const ContentModel = require(path.join(process.cwd(), "app/models/content"));
+const contentTypes = require("./contentTypes");
+const languageHelper = require("./language");
+const apiHelper = require("./api");
+const populateHelper = require(path.join(process.cwd(), "app/helpers/populate"));
+const fieldHelper = require("./field");
 
-var ContentModel = require(path.join(process.cwd(), "app/models/content"));
-var contentTypes = require("./contentTypes");
-var languageHelper = require("./language");
-var apiHelper = require("./api");
-var populateHelper = require(path.join(process.cwd(), "app/helpers/populate"));
-var fieldHelper = require("./field");
-
-var contentMongoQuery = function() {
+const contentMongoQuery = function() {
 	return {
 		"meta.contentType": contentTypes().product_doc_version,
 	};
 };
-var contentMongoFields = {
+const contentMongoFields = {
 	_id: 0,
 	uuid: 1,
 	fields: 1,
@@ -47,7 +45,7 @@ function fetchVersion(uuid) {
 }
 
 function fetchVersions(uuid, product) {
-	var settings = populateHelper.fields.getPopulatorConfig.view({
+	const settings = populateHelper.fields.getPopulatorConfig.view({
 		lang: languageHelper.currentLanguage(),
 		uuid: uuid,
 		"view.product_versions.product": product,
@@ -59,7 +57,7 @@ function fetchVersions(uuid, product) {
 		uuid: uuid,
 	}, null, settings, settings.populateFields)
 		.then(function(viewResult) {
-			var result = {
+			const result = {
 				versionItems: [],
 				apiS: [],
 				customItems: [],
@@ -79,7 +77,7 @@ function fetchVersions(uuid, product) {
 				});
 			}));
 
-			var versionApiS = _.flattenDeep(viewResult.data.map(function(version) {
+			const versionApiS = _.flattenDeep(viewResult.data.map(function(version) {
 				return version.fields.apiS.map(function(api) {
 					return {
 						version: getVersionLabel(version),
@@ -87,7 +85,8 @@ function fetchVersions(uuid, product) {
 					};
 				});
 			}));
-			var uuids = versionApiS.map(function(version) {
+
+			const uuids = versionApiS.map(function(version) {
 				return version.api;
 			});
 
@@ -98,7 +97,7 @@ function fetchVersions(uuid, product) {
 			return apiHelper.fetchApiS(uuids)
 				.then(function(response) {
 					result.apiS = response.apiS.map(function(api) {
-						var version = versionApiS.find(function(a) {
+						const version = versionApiS.find(function(a) {
 							return a.api === api.uuid;
 						}) || {};
 
@@ -114,7 +113,7 @@ function fetchVersions(uuid, product) {
 					});
 
 					result.customItems = response.customItems.map(function(item) {
-						var version = versionApiS.find(function(v) {
+						const version = versionApiS.find(function(v) {
 							return v.api === item.apiUuid;
 						}) || {};
 
@@ -124,18 +123,14 @@ function fetchVersions(uuid, product) {
 					});
 
 					return result;
-				}, function(err) {
-					throw err;
 				});
-		}, function(err) {
-			throw err;
 		});
 }
 
 function getVersionLabel(version) {
-	var major = _.get(version, "fields.versionMajor", 0);
-	var minor = _.get(version, "fields.versionMinor", 0);
-	var patch = _.get(version, "fields.versionPatch", 0);
+	const major = _.get(version, "fields.versionMajor", 0);
+	const minor = _.get(version, "fields.versionMinor", 0);
+	const patch = _.get(version, "fields.versionPatch", 0);
 
 	return "v" + [major, minor, patch].join(".");
 }

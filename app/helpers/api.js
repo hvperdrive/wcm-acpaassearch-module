@@ -1,21 +1,20 @@
-"use strict";
+const _ = require("lodash");
+const path = require("path");
 
-var _ = require("lodash");
-var path = require("path");
+const ContentModel = require(path.join(process.cwd(), "app/models/content"));
+const contentTypes = require("./contentTypes");
+const customItemsHelper = require("./customItems");
+const languageHelper = require("./language");
 
-var ContentModel = require(path.join(process.cwd(), "app/models/content"));
-var contentTypes = require("./contentTypes");
-var customItemsHelper = require("./customItems");
-var languageHelper = require("./language");
-
-var contentMongoQuery = function() {
+const contentMongoQuery = function() {
 	return {
 		"meta.contentType": contentTypes().api,
 		"meta.published": true,
 		"meta.deleted": false,
 	};
 };
-var contentMongoFields = {
+
+const contentMongoFields = {
 	_id: 0,
 	uuid: 1,
 	fields: 1,
@@ -43,18 +42,18 @@ function fetchApiS(uuids) {
 	.lean()
 	.exec()
 	.then(function(apiS) {
-		var result = {
+		let result = {
 			apiS: apiS,
 			customItems: [],
 		};
 
-		var apiCustomItems = _.flattenDeep(apiS.map(function(api) {
-			var customItems = _.get(api, "fields.customItems", []);
-			var hiddenItems = _.get(api, "fields.hiddenItems", []);
+		let apiCustomItems = _.flattenDeep(apiS.map(function(api) {
+			let customItems = _.get(api, "fields.customItems", []);
+			let hiddenItems = _.get(api, "fields.hiddenItems", []);
 
 			return parseCustomItems(customItems.concat(hiddenItems), api);
 		}));
-		var apiSToFetch = apiCustomItems.map(function(item) {
+		let apiSToFetch = apiCustomItems.map(function(item) {
 			return item.uuid;
 		});
 
@@ -65,7 +64,7 @@ function fetchApiS(uuids) {
 		return customItemsHelper.fetchCustomItems(apiSToFetch)
 			.then(function(customItems) {
 				result.customItems = customItems.map(function(item) {
-					var api = (apiCustomItems.find(function(i) {
+					let api = (apiCustomItems.find(function(i) {
 						return i.uuid === item.uuid;
 					}) || {});
 
@@ -85,10 +84,10 @@ function fetchApiS(uuids) {
 }
 
 function checkVisibility(fields) {
-	var values = ["allProfiles", "aProfiles", "mProfiles"];
+	let values = ["allProfiles", "aProfiles", "mProfiles"];
 
-	var value = fields.reduce(function(acc, field) {
-		var fieldIndex = values.indexOf(field);
+	let value = fields.reduce(function(acc, field) {
+		let fieldIndex = values.indexOf(field);
 
 		return fieldIndex > acc ? fieldIndex : acc;
 	}, -1);

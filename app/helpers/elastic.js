@@ -1,18 +1,17 @@
-"use strict";
-
 require("rootpath")();
-var elasticsearch = require("elasticsearch");
-var mappings = require("../config/mappings");
-var variablesHelper = require("../helpers/variables");
-var indicesHelper = require("./indices");
 
-var initiateClient = function initiateClient() {
-	var me = this;
+const elasticsearch = require("elasticsearch");
+const mappings = require("../config/mappings");
+const variablesHelper = require("../helpers/variables");
+const indicesHelper = require("./indices");
+
+const initiateClient = function initiateClient() {
+	const me = this;
 
 	variablesHelper.reload()
 		.then(function(variables) {
-			var host = "";
-			var log = "";
+			let host = "";
+			let log = "";
 
 			if (!variables || !variables.acpaassearch.variables.host) {
 				me.connected = false;
@@ -30,8 +29,8 @@ var initiateClient = function initiateClient() {
 			// Check if connection can be made
 			me.client.ping(function(err) {
 				if (err) {
-					console.log("Unable to initiate elastic client");
-					console.log(err);
+					console.log("Unable to initiate elastic client"); // eslint-disable-line no-console
+					console.log(err); // eslint-disable-line no-console
 					me.connected = false;
 					return;
 				}

@@ -1,5 +1,5 @@
-var cron = require("node-cron");
-var syncAll = require("../helpers/syncAll");
+const cron = require("node-cron");
+const syncAll = require("../helpers/syncAll");
 
 function ElasticCron() {
 	this.cronJob = cron.schedule("0 0 1 * *", function() {

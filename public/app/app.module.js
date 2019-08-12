@@ -1,5 +1,3 @@
-"use strict";
-
 angular.module("acpaassearch_1.0.16.directives", []);
 angular.module("acpaassearch_1.0.16.factories", []);
 angular.module("acpaassearch_1.0.16.services", ["acpaassearch_1.0.16.factories"]);
