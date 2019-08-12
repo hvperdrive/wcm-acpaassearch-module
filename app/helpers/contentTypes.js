@@ -1,11 +1,8 @@
-"use strict";
+const path = require("path");
 
-require("rootpath")();
-var path = require("path");
+const ContentTypeModel = require(path.join(process.cwd(), "app/models/contentType"));
 
-var ContentTypeModel = require(path.join(process.cwd(), "app/models/contentType"));
-
-var safeLabels = [
+const safeLabels = [
 	"product",
 	"product_doc_version",
 	"api",
@@ -13,11 +10,12 @@ var safeLabels = [
 	"timeline_item",
 	"main_documentation",
 	"news_item",
+	"showcase_item"
 ];
-var contentTypes = {};
+const contentTypes = {};
 
-var toList = function(types) {
-	return Object.keys(types).reduce(function(acc, curr) {
+const toList = (types) => {
+	return Object.keys(types).reduce((acc, curr) => {
 		acc.push({
 			type: curr,
 			_id: types[curr],
@@ -37,20 +35,18 @@ function reload() {
 		})
 		.lean()
 		.exec()
-		.then(function(types) {
-			contentTypes = types.reduce(function(acc, type) {
+		.then((types) => {
+			contentTypes = types.reduce((acc, type) => {
 				acc[type.meta.safeLabel] = type._id.toString();
 				return acc;
 			}, {});
-		}, function(err) {
-			throw err;
 		});
 }
 
 function verifyType(type) {
 	type = typeof type === "string" ? type : type._id;
 
-	return toList(contentTypes).find(function(t) {
+	return toList(contentTypes).find((t) => {
 		return t._id === type.toString();
 	});
 }
@@ -65,4 +61,5 @@ module.exports.indexableTypes = [
 	// product is indexed separately due to all the population needs
 	"main_documentation",
 	"news_item",
+	"showcase_item"
 ];

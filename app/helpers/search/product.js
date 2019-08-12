@@ -1,27 +1,25 @@
-var _ = require("lodash");
+const _ = require("lodash");
 
-function getProductFieldsQuery(query, type) {
-	return _.map(["title", "intro", "about"], function (fieldName) {
-		return {
-			"nested": {
-				"path": "fields." + fieldName,
-				"query": {
-					"match_phrase_prefix": {
-						["fields." + fieldName + ".value"]: {
-							"query": query,
-							"slop": 50
-						}
+function getProductFieldsQuery(query) {
+	return _.map(["title", "intro", "about"], (fieldName) => ({
+		"nested": {
+			"path": "fields." + fieldName,
+			"query": {
+				"match_phrase_prefix": {
+					["fields." + fieldName + ".value"]: {
+						"query": query,
+						"slop": 50
 					}
-				},
-				"inner_hits": {
-					"name": fieldName
 				}
+			},
+			"inner_hits": {
+				"name": fieldName
 			}
-		};
-	});
+		}
+	}));
 }
 
-function getRoadmapItemsQuery(query, type) {
+function getRoadmapItemsQuery(query) {
 	return [{
 		"nested": {
 			"path": "fields.roadmap",
@@ -41,7 +39,7 @@ function getRoadmapItemsQuery(query, type) {
 }
 
 function getVisibleForFilter(fieldType, type) {
-	var allowedCustomItems = ["allProfiles"];
+	let allowedCustomItems = ["allProfiles"];
 
 	if (type === "mprofiel") {
 		return {};
@@ -51,13 +49,11 @@ function getVisibleForFilter(fieldType, type) {
 
 	return {
 		"bool": {
-			"must": _.map(allowedCustomItems, function (type) {
-				return {
-					"term": {
-						["fields." + fieldType + ".visibleFor"]: type
-					}
+			"must": _.map(allowedCustomItems, (type) => ({
+				"term": {
+					["fields." + fieldType + ".visibleFor"]: type
 				}
-			})
+			}))
 		}
 	};
 };
@@ -87,7 +83,7 @@ function getCustomItemsQuery(query, type) {
 }
 
 function getVersionsLoginTypeFilter(type) {
-	var disallowedFields = ["gettingStarted", "status", "support", "architecture", "faq"];
+	let disallowedFields = ["gettingStarted", "status", "support", "architecture", "faq"];
 
 	if (type === "mprofiel") {
 		return {};
@@ -156,7 +152,7 @@ function getApiItemsQuery(query, type) {
 	}];
 }
 
-module.exports.getQuery = function getProductsQuery(query, type) {
+module.exports.getQuery = (query, type) => {
 	return [].concat(
 		getProductFieldsQuery(query, type),
 		getRoadmapItemsQuery(query, type),
@@ -166,11 +162,9 @@ module.exports.getQuery = function getProductsQuery(query, type) {
 	);
 };
 
-module.exports.getHighlightFields = function getHighlightFields() {
-	return {
-		"fields.*": {
-			"term_vector": "with_positions_offsets",
-			"fragment_size": 200,
-		},
-	};
-};
+module.exports.getHighlightFields = () => ({
+	"fields.*": {
+		"term_vector": "with_positions_offsets",
+		"fragment_size": 200,
+	}
+});

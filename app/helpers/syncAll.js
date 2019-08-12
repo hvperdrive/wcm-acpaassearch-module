@@ -1,38 +1,22 @@
-"use strict";
+const productHelper = require("./product");
+const docHelper = require("./doc");
+const indexableTypes = require("./contentTypes").indexableTypes;
+const runQueue = require("./queue").runQueue;
 
-require("rootpath")();
-
-var productHelper = require("./product");
-var docHelper = require("./doc");
-var indexableTypes = require("./contentTypes").indexableTypes;
-var runQueue = require("./queue").runQueue;
-
-function errHandler(err) {
-	throw err;
-}
-
-module.exports = function() {
-	var elasticsearch = require("./elastic");
+module.exports = () => {
+	const elasticsearch = require("./elastic");
 
 	return productHelper
 		.fetchProducts()
-		.then(function(products) {
-			var items = products;
+		.then((products) => {
+			let items = products;
 
-			return runQueue(indexableTypes.map(function(type) {
-				return function() {
-					return docHelper.fetchDocs(type)
-						.then(function(docs) {
-							items = items.concat(docs);
-						}, errHandler);
-				};
-			}))
-			.then(function() {
-				return items;
-			}, errHandler);
+			return runQueue(indexableTypes.map((type) => {
+				return () => docHelper.fetchDocs(type)
+					.then((docs) => items = items.concat(docs));
+			}));
 		})
-		.then(function(products) {
+		.then((products) => {
 			return productHelper.syncProducts(products, elasticsearch);
-		}, errHandler)
-		.catch(errHandler);
+		});
 };
