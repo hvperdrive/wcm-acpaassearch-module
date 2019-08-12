@@ -1,9 +1,9 @@
-var variablesHelper = require("../helpers/variables");
-var contentTypesHelper = require("../helpers/contentTypes");
-var elastic = require("../helpers/elastic");
-var listeners = require("../controllers/listeners");
+const variablesHelper = require("../helpers/variables");
+const contentTypesHelper = require("../helpers/contentTypes");
+const elastic = require("../helpers/elastic");
+const listeners = require("../controllers/listeners");
 
-var onConfigurationChanged = function onConfigurationChanged() {
+const onConfigurationChanged = function onConfigurationChanged() {
 	// Reload config
 	variablesHelper.reload()
 		.then(function() {
@@ -13,22 +13,22 @@ var onConfigurationChanged = function onConfigurationChanged() {
 
 };
 
-var beforeRemove = function beforeRemove() {
+const beforeRemove = function beforeRemove() {
 	// Stop listeners
 	listeners.stop();
 };
 
-var beforeDisable = function beforeDisable() {
+const beforeDisable = function beforeDisable() {
 	// Stop listeners
 	listeners.stop();
 };
 
-var onEnabled = function onEnabled() {
+const onEnabled = function onEnabled() {
 	// Reenable listeners
 	listeners.start();
 };
 
-var onLoadComplete = function onLoadComplete() {
+const onLoadComplete = function onLoadComplete() {
 	// Setup listeners
 	listeners.start();
 
@@ -36,7 +36,7 @@ var onLoadComplete = function onLoadComplete() {
 };
 
 module.exports = function handleHooks(hooks) {
-	var myHooks = {
+	const myHooks = {
 		onConfigurationChanged: onConfigurationChanged,
 		beforeRemove: beforeRemove,
 		onLoadComplete: onLoadComplete,

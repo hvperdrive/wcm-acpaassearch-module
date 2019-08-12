@@ -8,14 +8,14 @@ function getProductFieldsQuery(query) {
 				"match_phrase_prefix": {
 					["fields." + fieldName + ".value"]: {
 						"query": query,
-						"slop": 50
-					}
-				}
+						"slop": 50,
+					},
+				},
 			},
 			"inner_hits": {
-				"name": fieldName
-			}
-		}
+				"name": fieldName,
+			},
+		},
 	}));
 }
 
@@ -32,8 +32,8 @@ function getRoadmapItemsQuery(query) {
 				},
 			},
 			"inner_hits": {
-				"name": "roadmap"
-			}
+				"name": "roadmap",
+			},
 		},
 	}];
 }
@@ -49,14 +49,14 @@ function getVisibleForFilter(fieldType, type) {
 
 	return {
 		"bool": {
-			"must": _.map(allowedCustomItems, (type) => ({
+			"must": _.map(allowedCustomItems, (customItemType) => ({
 				"term": {
-					["fields." + fieldType + ".visibleFor"]: type
-				}
-			}))
-		}
+					["fields." + fieldType + ".visibleFor"]: customItemType,
+				},
+			})),
+		},
 	};
-};
+}
 
 function getCustomItemsQuery(query, type) {
 	return [{
@@ -72,13 +72,13 @@ function getCustomItemsQuery(query, type) {
 							"slop": 50,
 						},
 					},
-					"filter": getVisibleForFilter("customItems", type)
-				}
+					"filter": getVisibleForFilter("customItems", type),
+				},
 			},
 			"inner_hits": {
-				"name": "customItems"
-			}
-		}
+				"name": "customItems",
+			},
+		},
 	}];
 }
 
@@ -95,10 +95,10 @@ function getVersionsLoginTypeFilter(type) {
 		"bool": {
 			"filter": {
 				"terms": {
-					"fields.versionItems.slug": disallowedFields
-				}
-			}
-		}
+					"fields.versionItems.slug": disallowedFields,
+				},
+			},
+		},
 	};
 }
 
@@ -116,13 +116,13 @@ function getVersionItemsQuery(query, type) {
 							"slop": 50,
 						},
 					},
-					"must_not": getVersionsLoginTypeFilter(type)
-				}
+					"must_not": getVersionsLoginTypeFilter(type),
+				},
 			},
 			"inner_hits": {
-				"name": "versionItems"
-			}
-		}
+				"name": "versionItems",
+			},
+		},
 	}];
 }
 
@@ -142,13 +142,13 @@ function getApiItemsQuery(query, type) {
 							"slop": 50,
 						},
 					},
-					"filter": getVisibleForFilter("apiS", type)
-				}
+					"filter": getVisibleForFilter("apiS", type),
+				},
 			},
 			"inner_hits": {
-				"name": "apiS"
-			}
-		}
+				"name": "apiS",
+			},
+		},
 	}];
 }
 
@@ -166,5 +166,5 @@ module.exports.getHighlightFields = () => ({
 	"fields.*": {
 		"term_vector": "with_positions_offsets",
 		"fragment_size": 200,
-	}
+	},
 });

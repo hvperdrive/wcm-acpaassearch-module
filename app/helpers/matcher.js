@@ -1,10 +1,8 @@
-"use strict";
+const _ = require("lodash");
 
-var _ = require("lodash");
+const languageHelper = require("./language");
 
-var languageHelper = require("./language");
-
-var typeMatchers = [{
+const typeMatchers = [{
 	label: "product_doc_version",
 	match: function(value) {
 		return {
@@ -67,7 +65,7 @@ var typeMatchers = [{
 }];
 
 module.exports.getMatcherForType = function(contentType, doc) {
-	var typeMatcher = typeMatchers.find(function(tm) {
+	const typeMatcher = typeMatchers.find(function(tm) {
 		return tm.label === contentType.type;
 	});
 

@@ -1,4 +1,4 @@
-var getModule = require("@wcm/module-helper").getModule;
+const getModule = require("@wcm/module-helper").getModule;
 
 module.exports.prepareMember = function prepareMember(req, res, next) {
 	return getModule("@wcm/members").then(function(mod) {

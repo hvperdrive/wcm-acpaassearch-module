@@ -1,9 +1,9 @@
-var Q = require("q");
+const Q = require("q");
 
-var VariableHelper = require("@wcm/module-helper").variables;
+const VariableHelper = require("@wcm/module-helper").variables;
 
-var packageInfo = null;
-var variables = null;
+let packageInfo = null;
+let variables = null;
 
 module.exports = function getVariables() {
 	return variables;
@@ -23,8 +23,8 @@ module.exports.reload = function reload(info) {
 			return variables;
 		})
 		.catch(function onError(responseError) {
-			console.error("Failed getting variables (acpaasearch module)");
-			console.error(responseError);
+			console.error("Failed getting variables (acpaasearch module)"); // eslint-disable-line no-console
+			console.error(responseError); // eslint-disable-line no-console
 		});
 };
 

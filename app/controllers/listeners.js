@@ -34,7 +34,7 @@ function handleUpdate(contentItem, action) {
 	const contentType = contentTypes.verifyType(contentItem.meta.contentType);
 
 	if (!contentType) {
-		return console.log("CONTENTTYPE NOT ALLOWED", contentType);
+		return console.log("CONTENTTYPE NOT ALLOWED", contentType); // eslint-disable-line no-console
 	}
 
 	const elasticsearch = require("../helpers/elastic");
@@ -62,7 +62,8 @@ function onContentCreated(contentItem) {
 	try {
 		handleUpdate(contentItem, "sync");
 	} catch (err) {
-		console.log(err);
+		console.log("OnContentCreated event handler failed:"); // eslint-disable-line no-console
+		console.log(err); // eslint-disable-line no-console
 	}
 }
 
@@ -70,7 +71,8 @@ function onContentUpdated(contentItem) {
 	try {
 		handleUpdate(contentItem, "sync");
 	} catch (err) {
-		console.log(err);
+		console.log("OnContentUpdated event handler failed:"); // eslint-disable-line no-console
+		console.log(err); // eslint-disable-line no-console
 	}
 }
 
@@ -78,7 +80,8 @@ function onContentRemoved(contentItem) {
 	try {
 		handleUpdate(contentItem, "remove");
 	} catch (err) {
-		console.log(err);
+		console.log("OnContentRemoved event handler failed:"); // eslint-disable-line no-console
+		console.log(err); // eslint-disable-line no-console
 	}
 }
 

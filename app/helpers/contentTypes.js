@@ -10,9 +10,9 @@ const safeLabels = [
 	"timeline_item",
 	"main_documentation",
 	"news_item",
-	"showcase_item"
+	"showcase_item",
 ];
-const contentTypes = {};
+let contentTypes = {};
 
 const toList = (types) => {
 	return Object.keys(types).reduce((acc, curr) => {
@@ -61,5 +61,5 @@ module.exports.indexableTypes = [
 	// product is indexed separately due to all the population needs
 	"main_documentation",
 	"news_item",
-	"showcase_item"
+	"showcase_item",
 ];

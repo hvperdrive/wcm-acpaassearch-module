@@ -1,8 +1,7 @@
-require("rootpath")();
-var _ = require("lodash");
-var path = require("path");
-var uuid = require("node-uuid");
-var ErrorModel = require(path.join(process.cwd(), "app/models/errorLog"));
+const _ = require("lodash");
+const path = require("path");
+const uuid = require("node-uuid");
+const ErrorModel = require(path.join(process.cwd(), "app/models/errorLog"));
 
 module.exports = function(body, code, options) {
 	if (_.get(body, "msgs[0]")) {

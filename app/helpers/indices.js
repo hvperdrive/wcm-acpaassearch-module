@@ -61,8 +61,8 @@ const createOrUpdate = function createOrUpdate(client, index) {
 };
 
 const indexesAreEqual = function indexesAreEqual(index, storedIndex) {
-	var equalMappings = _.isEqual(index.mappings, storedIndex.mappings);
-	var equalSettings = !index.settings || _.isEqual(index.settings, storedIndex.settings);
+	const equalMappings = _.isEqual(index.mappings, storedIndex.mappings);
+	const equalSettings = !index.settings || _.isEqual(index.settings, storedIndex.settings);
 
 	return !(equalMappings && equalSettings);
 };

@@ -1,5 +1,5 @@
-var request = require("./request");
-var error = require("./error");
+const request = require("./request");
+const error = require("./error");
 
 module.exports = {
 	request: request,

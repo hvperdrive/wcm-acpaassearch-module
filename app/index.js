@@ -1,7 +1,7 @@
-var cron = require("./controllers/cron");
-var contentTypes = require("./helpers/contentTypes");
-var searchRoutes = require("./routes/search");
-var variablesHelper = require("./helpers/variables");
+const cron = require("./controllers/cron");
+const contentTypes = require("./helpers/contentTypes");
+const searchRoutes = require("./routes/search");
+const variablesHelper = require("./helpers/variables");
 
 module.exports = function(app, hooks, info) {
 	variablesHelper.reload(info)

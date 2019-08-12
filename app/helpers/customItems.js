@@ -1,13 +1,11 @@
-"use strict";
+const _ = require("lodash");
+const path = require("path");
 
-var _ = require("lodash");
-var path = require("path");
+const ContentModel = require(path.join(process.cwd(), "app/models/content"));
+const contentTypes = require("./contentTypes");
+const languageHelper = require("./language");
 
-var ContentModel = require(path.join(process.cwd(), "app/models/content"));
-var contentTypes = require("./contentTypes");
-var languageHelper = require("./language");
-
-var contentMongoQuery = function() {
+const contentMongoQuery = function() {
 	return {
 		"meta.contentType": contentTypes().basic_page,
 		"meta.published": true,
@@ -17,7 +15,8 @@ var contentMongoQuery = function() {
 		},
 	};
 };
-var contentMongoFields = {
+
+const contentMongoFields = {
 	_id: 0,
 	uuid: 1,
 	fields: 1,
