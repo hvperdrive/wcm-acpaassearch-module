@@ -1,34 +1,47 @@
 var variablesHelper = require("../helpers/variables");
+var contentTypesHelper = require("../helpers/contentTypes");
+var elastic = require("../helpers/elastic");
+var listeners = require("../controllers/listeners");
 
 var onConfigurationChanged = function onConfigurationChanged() {
-	console.log("on configuration changed");
 	// Reload config
-	variablesHelper.reload();
+	variablesHelper.reload()
+		.then(function() {
+			elastic.reload();
+			contentTypesHelper.reload();
+		});
+
 };
 
 var beforeRemove = function beforeRemove() {
-	console.log("before remove");
-};
-
-var onDisabled = function onDisabled() {
-	console.log("on disabled");
+	// Stop listeners
+	listeners.stop();
 };
 
 var beforeDisable = function beforeDisable() {
-	console.log("before disable");
+	// Stop listeners
+	listeners.stop();
 };
 
-var onRemoved = function() {
-	console.log("on removed");
+var onEnabled = function onEnabled() {
+	// Reenable listeners
+	listeners.start();
+};
+
+var onLoadComplete = function onLoadComplete() {
+	// Setup listeners
+	listeners.start();
+
+	onConfigurationChanged();
 };
 
 module.exports = function handleHooks(hooks) {
 	var myHooks = {
 		onConfigurationChanged: onConfigurationChanged,
 		beforeRemove: beforeRemove,
-		onRemoved: onRemoved,
-		onDisabled: onDisabled,
+		onLoadComplete: onLoadComplete,
 		beforeDisable: beforeDisable,
+		onEnabled: onEnabled,
 	};
 
 	Object.assign(hooks, myHooks);
