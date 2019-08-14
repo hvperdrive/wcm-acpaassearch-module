@@ -12,7 +12,7 @@ const safeLabels = [
 	"news_item",
 	"showcase_item"
 ];
-const contentTypes = {};
+let contentTypes = {};
 
 const toList = (types) => {
 	return Object.keys(types).reduce((acc, curr) => {
