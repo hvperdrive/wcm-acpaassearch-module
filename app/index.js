@@ -1,25 +1,26 @@
-var cron = require("./controllers/cron");
-var contentTypes = require("./helpers/contentTypes");
-var searchRoutes = require("./routes/search");
-var variablesHelper = require("./helpers/variables");
+const cron = require("./controllers/cron");
+const contentTypes = require("./helpers/contentTypes");
+const searchRoutes = require("./routes/search");
+const variablesHelper = require("./helpers/variables");
+const listeners = require("./controllers/listeners");
 
-module.exports = function(app, hooks, info) {
-	variablesHelper.reload(info)
-		.finally(function() {
-			// Initiate elastic
-			require("./helpers/elastic").reload();
+module.exports = (app, hooks, info) => {
+	variablesHelper.reload(info).finally(() => {
+		// Initiate elastic
+		require("./helpers/elastic").reload();
 
-			// Setup hooks
-			require("./controllers/hooks")(hooks);
+		// Setup hooks
+		require("./controllers/hooks")(hooks);
 
-			// start cronjobs
-			cron.start();
+		// start cronjobs
+		cron.start();
 
-			// Update contentTypes
-			contentTypes.reload();
-		});
+		// Update contentTypes
+		contentTypes.reload();
 
-
+		// Start listeners
+		listeners.start();
+	});
 
 	// Setup routes
 	searchRoutes(app);
