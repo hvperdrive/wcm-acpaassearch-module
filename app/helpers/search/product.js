@@ -126,8 +126,6 @@ function getVersionItemsQuery(query, type) {
 	}];
 }
 
-
-
 function getApiItemsQuery(query, type) {
 	return [{
 		"nested": {
@@ -152,13 +150,33 @@ function getApiItemsQuery(query, type) {
 	}];
 }
 
+function getTagsQuery(query) {
+	return [{
+		"nested": {
+			"path": "meta.tags",
+			"query": {
+				"match": {
+					["meta.tags.value"]: {
+						"query": query,
+						"fuzziness": "AUTO",
+					},
+				},
+			},
+			"inner_hits": {
+				"name": "tags",
+			},
+		}
+	}];
+}
+
 module.exports.getQuery = (query, type) => {
 	return [].concat(
 		getProductFieldsQuery(query, type),
 		getRoadmapItemsQuery(query, type),
 		getCustomItemsQuery(query, type),
 		getVersionItemsQuery(query, type),
-		getApiItemsQuery(query, type)
+		getApiItemsQuery(query, type),
+		getTagsQuery(query)
 	);
 };
 
