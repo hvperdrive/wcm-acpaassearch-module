@@ -1,6 +1,6 @@
 {
   "name": "@wcm/acpaassearch",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Search module for AcPaaS Portal",
   "main": "app",
   "scripts": {

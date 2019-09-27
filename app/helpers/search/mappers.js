@@ -77,7 +77,9 @@ const mapProducts = (products) => {
 			category: _.get(product, "_source.fields.productCategory"),
 			slug: slug,
 			title: _.get(product, "_source.fields.title.value"),
-			description: _.get(product, "_source.fields.about.value") || _.get(product, "_source.fields.intro.value"),
+			description: _.get(product, "_source.fields.about.value") ||
+				_.get(product, "_source.fields.intro.value") ||
+				_.get(product, "_source.fields.body.value"),
 		};
 	});
 };
