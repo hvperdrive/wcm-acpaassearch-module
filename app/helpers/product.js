@@ -9,6 +9,7 @@ const contentTypesHelper = require("./contentTypes");
 const versionHelper = require("./version");
 const matcher = require("./matcher");
 const fieldHelper = require("./field");
+const contentTypes = require("./contentTypes")();
 
 const contentMongoQuery = () => ({
 	"meta.contentType": contentTypesHelper().product,
@@ -27,6 +28,17 @@ const contentMongoFields = {
 	"meta.slug": 1,
 	"meta.taxonomy": 1,
 };
+
+// Uitbreding: deze waarden vanuit WCM taxonomy lijsten halen
+const contentTypeTagsMap = Object.freeze({
+	"product": ["products", "producten", "componenten", "compontents"],
+	"product_doc_version": ["versies", "versions", "producten", "products", "componenten", "components"],
+	"api": ["api", "producten", "products", "componenten", "components"],
+	"timeline": ["tijdlijn", "tijdslijn", "timeline", "componenten", "components"],
+	"main_documentation": ["main_documentation", "documentatie", "algemene documentatie"],
+	"news_item": ["news", "nieuws"],
+	"showcase_item": ["showcase", "uitgelicht"],
+});
 
 function verifyUuid(product) {
 	return typeof product === "string" ? product : product.uuid;
@@ -118,10 +130,16 @@ function transformField(field) {
 	};
 }
 
+function getTagsBasedOnCT(contentType) {
+	return { value: contentTypeTagsMap[contentType] };
+}
+
 function transformProduct(product) {
+	const contentTypeString = typeof product.meta.contentType === "string" ? product.meta.contentType : contentTypesHelper.verifyType(product.meta.contentType)._id;
+
 	const meta = {
 		activeLanguages: product.meta.activeLanguages,
-		contentType: typeof product.meta.contentType === "string" ? product.meta.contentType : contentTypesHelper.verifyType(product.meta.contentType)._id,
+		contentType: contentTypeString,
 		created: product.meta.created,
 		lastModified: product.meta.lastModified,
 		publishDate: product.meta.publishDate,
@@ -129,7 +147,9 @@ function transformProduct(product) {
 		taxonomy: {
 			tags: product.meta.taxonomy.tags,
 		},
+		tags: getTagsBasedOnCT(contentTypeString),
 	};
+	console.log(meta.tags);
 	const roadmap = _.get(product, "fields.roadmap", []).map((item) => ({
 		uuid: item.uuid,
 		title: languageHelper.verifyMultilanguage(item.fields.title),

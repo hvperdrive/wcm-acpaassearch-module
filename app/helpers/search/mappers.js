@@ -19,7 +19,7 @@ const getCustomItemSlug = (productSlug, topHitSource) => {
 };
 
 const getDefaultItemSlug = (productSlug, topHit) => {
-	const emptyKeys = ["title", "intro"];
+	const emptyKeys = ["title", "intro", "tags"];
 
 	return productSlug +
 		(emptyKeys.indexOf(topHit._key) >= 0 ? "" : ("/" + topHit._key));
@@ -77,7 +77,7 @@ const mapProducts = (products) => {
 			category: _.get(product, "_source.fields.productCategory"),
 			slug: slug,
 			title: _.get(product, "_source.fields.title.value"),
-			description: _.get(product, "_source.fields.intro.value"),
+			description: _.get(product, "_source.fields.about.value") || _.get(product, "_source.fields.intro.value"),
 		};
 	});
 };

@@ -147,6 +147,14 @@ module.exports = {
 					"index": "no",
 					"type": "string",
 				},
+				"tags": {
+					"type": "nested",
+					"properties": {
+						"value": {
+							"type": "string",
+						},
+					},
+				},
 			},
 		},
 		"uuid": {

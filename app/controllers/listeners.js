@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const Emitter = require("@wcm/module-helper").emitter;
 
 const contentTypes = require("../helpers/contentTypes");
@@ -20,6 +21,11 @@ const actions = {
 		sync: productHelper.syncProduct,
 		remove: productHelper.removeProduct,
 	},
+	showcase_item: { // eslint-disable-line camelcase
+		fetch: docHelper.fetchDoc,
+		sync: productHelper.syncProduct,
+		remove: productHelper.removeProduct,
+	},
 };
 
 function verifyAction(action, contentType) {
@@ -31,7 +37,7 @@ function verifyAction(action, contentType) {
 }
 
 function handleUpdate(contentItem, action) {
-	const contentType = contentTypes.verifyType(contentItem.meta.contentType);
+	const contentType = contentTypes.verifyType(_.get(contentItem, "meta.contentType"));
 
 	if (!contentType) {
 		return console.log("CONTENTTYPE NOT ALLOWED", contentType);
