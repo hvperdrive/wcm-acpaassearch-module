@@ -19,7 +19,7 @@ const getCustomItemSlug = (productSlug, topHitSource) => {
 };
 
 const getDefaultItemSlug = (productSlug, topHit) => {
-	const emptyKeys = ["title", "intro"];
+	const emptyKeys = ["title", "intro", "tags"];
 
 	return productSlug +
 		(emptyKeys.indexOf(topHit._key) >= 0 ? "" : ("/" + topHit._key));
