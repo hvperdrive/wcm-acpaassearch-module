@@ -1,4 +1,5 @@
 const _ = require("lodash");
+const { boostConfig } = require("../../config/innerHitsConfig");
 
 const getAPISlug = (productSlug, topHitSource) => {
 	return productSlug + "/" +
@@ -44,12 +45,25 @@ const generateTopHitSlug = (topHit, productSlug) => {
 	}
 };
 
+const boostScore = (boostConfig, hit) => {
+	const field = _.get(hit, "_nested.field");
+	const originalScore = _.get(hit, "_score");
+
+	if (!field || typeof boostConfig[field] !== "number") {
+		return originalScore;
+	}
+
+	return originalScore * boostConfig[field];
+}
+
 const getProductTopInnerHit = (product) => {
 	const allHits = _.reduce(_.get(product, "inner_hits", {}), (acc, item, key) => {
 		const hits = _.map(_.get(item, "hits.hits", []), (hit) => {
 			return Object.assign({},
 				hit, {
 					_key: key,
+					_originalScore: _.get(hit, "_score"),
+					_score: boostScore(boostConfig, hit)
 				}
 			);
 		});
@@ -57,12 +71,15 @@ const getProductTopInnerHit = (product) => {
 		return acc.concat(hits);
 	}, []);
 
-	return _.maxBy(allHits, "_score");
+	return {
+		maxScore: _.maxBy(allHits, "_score"),
+		allHits,
+	};
 };
 
 const mapProducts = (products) => {
 	return _.map(products, (product) => {
-		const topHit = getProductTopInnerHit(product);
+		const { allHits, maxScore: topHit} = getProductTopInnerHit(product);
 		let productSlug = "";
 
 		if (["main_documentation", "news"].indexOf(_.get(product, "_source.fields.productCategory"))) {
@@ -80,6 +97,7 @@ const mapProducts = (products) => {
 			description: _.get(product, "_source.fields.about.value") ||
 				_.get(product, "_source.fields.intro.value") ||
 				_.get(product, "_source.fields.body.value"),
+			allHits,
 		};
 	});
 };
