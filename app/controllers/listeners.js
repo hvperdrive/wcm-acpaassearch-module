@@ -54,17 +54,17 @@ function handleUpdate(contentItem, action) {
 	}
 
 	const fetchAction = verifyAction("fetch", contentType);
-	if (action !== 'remove' && contentItem.meta.status === "PUBLISHED") {
+	if (action !== 'remove' && contentItem.meta.status === "PUBLISHED" && fetchAction) {
 		return fetchAction(contentItem, contentType.type)
 			.then((populatedContent) => {
 				syncAction(populatedContent, elasticsearch);
 			});
 	}
 
-	if (contentItem.meta.status === "PUBLISHED") {
+	const deleteAction = verifyAction("remove", contentType);
+	if (contentItem.meta.status === "PUBLISHED" && syncAction) {
 		syncAction(contentItem, elasticsearch);
-	} else {
-		const deleteAction = verifyAction("remove", contentType);
+	} else if (deleteAction) {
 		deleteAction(contentItem, elasticsearch);
 	}
 }
