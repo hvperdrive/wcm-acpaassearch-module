@@ -43,9 +43,8 @@ function handleUpdate(contentItem, action) {
 		return console.log("CONTENTTYPE NOT ALLOWED", contentType);
 	}
 
-	const elasticsearch = require("../helpers/elastic");
-	const syncAction = verifyAction(action, contentType);
-	const fetchAction = verifyAction("fetch", contentType);
+    const elasticsearch = require("../helpers/elastic");
+    const syncAction = verifyAction(action, contentType);
 
 	if (!syncAction) {
 		return productHelper.fetchProductsForDoc(docHelper.parseDoc(contentType, contentItem), elasticsearch)
@@ -54,14 +53,20 @@ function handleUpdate(contentItem, action) {
 			});
 	}
 
-	if (fetchAction) {
+    const fetchAction = verifyAction("fetch", contentType);
+	if (action !== 'remove' && contentItem.meta.status === "PUBLISHED") {
 		return fetchAction(contentItem, contentType.type)
 			.then((populatedContent) => {
 				syncAction(populatedContent, elasticsearch);
 			});
 	}
 
-	syncAction(contentItem, elasticsearch);
+    if (contentItem.meta.status === "PUBLISHED") {
+        syncAction(contentItem, elasticsearch);
+    } else {
+        const deleteAction = verifyAction("remove", contentType);
+        deleteAction(contentItem, elasticsearch);
+    }
 }
 
 function onContentCreated(contentItem) {
