@@ -102,7 +102,7 @@ function populateProduct(product) {
 		delete pItem.fields.customItems;
 		delete pItem.fields.hiddenItems;
 
-		pItem.fields.roadmap = pItem.fields.roadmap.map((i) => i.value);
+		pItem.fields.roadmap = get(pItem, "fields.roadmap", []).map((i) => i.value);
 
 		return pItem;
 	})
@@ -149,7 +149,6 @@ function transformProduct(product) {
 		},
 		tags: getTagsBasedOnCT(contentTypeString),
 	};
-	console.log(meta.tags);
 	const roadmap = _.get(product, "fields.roadmap", []).map((item) => ({
 		uuid: item.uuid,
 		title: languageHelper.verifyMultilanguage(item.fields.title),
