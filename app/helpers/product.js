@@ -102,7 +102,7 @@ function populateProduct(product) {
 		delete pItem.fields.customItems;
 		delete pItem.fields.hiddenItems;
 
-		pItem.fields.roadmap = get(pItem, "fields.roadmap", []).map((i) => i.value);
+		pItem.fields.roadmap = _.get(pItem, "fields.roadmap", []).map((i) => i.value);
 
 		return pItem;
 	})
