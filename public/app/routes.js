@@ -1,7 +1,7 @@
 "use strict";
 
 angular
-	.module("acpaassearch_1.3.0")
+	.module("acpaassearch_1.3.4")
 	.config([
 		"$stateProvider",
 		"acpaassearchConfigProvider",
