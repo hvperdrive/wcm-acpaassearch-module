@@ -45,7 +45,6 @@ function handleUpdate(contentItem, action) {
 
 	const elasticsearch = require("../helpers/elastic");
 	const syncAction = verifyAction(action, contentType);
-	const fetchAction = verifyAction("fetch", contentType);
 
 	if (!syncAction) {
 		return productHelper.fetchProductsForDoc(docHelper.parseDoc(contentType, contentItem), elasticsearch)
@@ -54,14 +53,20 @@ function handleUpdate(contentItem, action) {
 			});
 	}
 
-	if (fetchAction) {
+	const fetchAction = verifyAction("fetch", contentType);
+	if (action !== 'remove' && contentItem.meta.status === "PUBLISHED" && fetchAction) {
 		return fetchAction(contentItem, contentType.type)
 			.then((populatedContent) => {
 				syncAction(populatedContent, elasticsearch);
 			});
 	}
 
-	syncAction(contentItem, elasticsearch);
+	const deleteAction = verifyAction("remove", contentType);
+	if (contentItem.meta.status === "PUBLISHED" && syncAction) {
+		syncAction(contentItem, elasticsearch);
+	} else if (deleteAction) {
+		deleteAction(contentItem, elasticsearch);
+	}
 }
 
 function onContentCreated(contentItem) {
