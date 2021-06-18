@@ -72,7 +72,7 @@
     "node-cron": "^1.2.1",
     "node-uuid": "~1.4.8",
     "rootpath": "^0.1.2",
-    "striptags": "^3.0.1"
+    "striptags": "^3.2.0"
   },
   "devDependencies": {
     "@district01/eslint-config": "~1.0.0",
